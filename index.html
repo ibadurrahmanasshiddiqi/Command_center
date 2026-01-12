@@ -3,9 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center Log Book v3.0 (Backup & Rekap)</title>
+    <title>Command Center Log Book v4.0 (Firebase Cloud)</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <style>
         /* --- BASE STYLES --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -44,6 +50,18 @@
             font-weight: 500;
         }
 
+        .cloud-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         /* --- CONTAINER --- */
         .container {
             max-width: 1400px;
@@ -57,13 +75,12 @@
         /* --- SIDEBAR --- */
         .sidebar {
             background: rgba(255, 255, 255, 0.9);
-            height: 100vh;
             color: white;
             padding: 2rem;
+            border-radius: 16px;
             position: sticky;
-            top: 0;
-            display: flex;
-            flex-direction: column;
+            top: 20px;
+            height: fit-content;
         }
 
         .logo-area {
@@ -104,34 +121,7 @@
             border-color: rgba(255, 255, 255, 0.3);
         }
 
-        .nav-icon {
-            font-size: 1.2rem;
-        }
-
-        .add-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            width: 100%;
-            text-align: center;
-            padding: 1.2rem;
-            border-radius: 12px;
-            border: 2px dashed rgba(255, 255, 255, 0.4);
-            cursor: pointer;
-            font-weight: 700;
-            margin-top: auto;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            transition: 0.2s;
-            color: white;
-            font-size: 1rem;
-            letter-spacing: 0.5px;
-        }
-        
-        .add-btn:hover {
-            border-color: white;
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
-        }
-
-        /* --- CARD (CONTENT) --- */
+        /* --- CARD --- */
         .card {
             background: white;
             border-radius: 16px;
@@ -244,11 +234,6 @@
             width: auto;
             padding: 0.6rem 1.2rem;
             font-size: 0.9rem;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
         }
 
         /* --- STATS GRID --- */
@@ -418,110 +403,27 @@
             color: white;
         }
 
-        /* --- DATA MANAGEMENT MODAL (NEW) --- */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(4px);
+        /* Loading Spinner */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #667eea;
+            font-weight: 600;
         }
 
-        .modal.show {
-            display: flex;
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
         }
 
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 2.5rem;
-            width: 90%;
-            max-width: 700px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            position: relative;
-            animation: slideDown 0.3s ease;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 1rem;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 2rem;
-            cursor: pointer;
-            color: #94a3b8;
-            transition: 0.2s;
-        }
-
-        .close-btn:hover {
-            color: #333;
-            transform: rotate(90deg);
-        }
-
-        .data-section {
-            margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: #f8fafc;
-            border-radius: 12px;
-            border: 1px dashed #cbd5e1;
-        }
-
-        .data-section h4 {
-            font-size: 1rem;
-            color: #334155;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-        }
-
-        .btn-file {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-
-        .btn-file input[type=file] {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            min-width: 100%;
-            min-height: 100%;
-            font-size: 100px;
-            text-align: right;
-            filter: alpha(opacity=0);
-            opacity: 0;
-            outline: none;
-            background: white;
-            cursor: inherit;
-            display: block;
-        }
-
-        .btn-file input[type=file]::-webkit-file-upload-button {
-            visibility: hidden;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         /* --- RESPONSIVE --- */
@@ -536,10 +438,6 @@
 
             .charts-row {
                 grid-template-columns: 1fr;
-            }
-
-            .search-box {
-                max-width: 100%;
             }
         }
 
@@ -557,11 +455,6 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
-
-            .table-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
         }
     </style>
 </head>
@@ -571,37 +464,38 @@
         <h1>
             <span>📞</span> Command Center Log Book
         </h1>
-        <div class="subtitle">Monitoring Aktivitas Telepon - Local Storage (Backup Ready)</div>
+        <div>
+            <span class="cloud-badge">☁️ Cloud Storage Active</span>
+        </div>
     </header>
 
     <div class="container">
-        <!-- LEFT SIDEBAR: INPUT FORM -->
+        <!-- LEFT SIDEBAR -->
         <aside class="sidebar">
             <div class="logo-area">
-                <span>📞</span> Log Book
+                <span>📞</span> DIQZA CALL
             </div>
             <ul class="nav-menu">
                 <li class="nav-item active">
-                    <span class="nav-icon">📝</span> Log Book
+                    <span>📋</span> Log Book
                 </li>
                 <li class="nav-item" onclick="window.location.reload()">
-                    <span class="nav-icon">🔄</span> Refresh Data
+                    <span>🔄</span> Refresh Data
                 </li>
-                <!-- NEW: DATA MANAGEMENT BUTTON -->
-                <li class="nav-item" onclick="openDataModal()" style="margin-top: auto; background: #667eea; color: white; border: 1px solid white;">
-                    <span class="nav-icon">💾</span> Backup / Pindah
+                <li class="nav-item" onclick="downloadCSV()">
+                    <span>📥</span> Download Laporan
                 </li>
             </ul>
         </aside>
 
-        <!-- RIGHT MAIN: DASHBOARD & TABLE -->
+        <!-- RIGHT MAIN -->
         <main>
             <!-- DASHBOARD STATS -->
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-label">Total Panggilan</div>
                     <div class="stat-value" id="totalCalls">0</div>
-                    <div class="stat-sub">Hari Ini</div>
+                    <div class="stat-sub">Semua Data</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-label">Berhasil (Deal)</div>
@@ -630,10 +524,10 @@
                 </div>
             </div>
 
-            <!-- INPUT FORM CARD -->
+            <!-- INPUT FORM -->
             <div class="card">
                 <div class="card-title">
-                    <span>✍️</span> Catat Panggilan Baru
+                    <span>✏️</span> Catat Panggilan Baru
                 </div>
                 
                 <div class="input-group">
@@ -675,7 +569,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tujuan Telepon</label>
-                        <input type="text" id="callPurpose" class="form-input" placeholder="e.g. Follow up, Penawaran Baru">
+                        <input type="text" id="callPurpose" class="form-input" placeholder="e.g. Follow up">
                     </div>
                 </div>
 
@@ -685,7 +579,7 @@
                 </div>
 
                 <button class="btn btn-primary" onclick="saveLog()">
-                    💾 Simpan Data
+                    💾 Simpan ke Cloud
                 </button>
                 <button class="btn btn-secondary" onclick="resetForm()">
                     🔄 Reset Form
@@ -695,15 +589,20 @@
             <!-- DATA TABLE -->
             <div class="card">
                 <div class="card-title">
-                    <span>📋</span> Log Book Panggilan
+                    <span>📋</span> Log Book Panggilan (Cloud)
                 </div>
                 
                 <div class="table-controls">
                     <div class="search-box">
                         <span>🔍</span>
-                        <input type="text" id="searchLog" placeholder="Cari nama / no telp / no pembiayaan..." onkeyup="renderLogTable()">
+                        <input type="text" id="searchLog" placeholder="Cari nama / no telp / no pembiayaan..." onkeyup="filterTable()">
                     </div>
-                    <button class="btn btn-danger" id="btnDelete" onclick="deleteSelected()" disabled>Hapus Terpilih</button>
+                    <button class="btn btn-danger" onclick="deleteSelected()" id="btnDelete" disabled>Hapus Terpilih</button>
+                </div>
+
+                <div id="loadingIndicator" class="loading" style="display:none;">
+                    <div class="spinner"></div>
+                    Memuat data dari cloud...
                 </div>
 
                 <div style="overflow-x: auto; max-height: 500px; overflow-y: auto; border-radius: 8px;">
@@ -723,7 +622,7 @@
                             </tr>
                         </thead>
                         <tbody id="tableBody">
-                            <!-- Data Generated from LocalStorage -->
+                            <!-- Firebase Data -->
                         </tbody>
                     </table>
                 </div>
@@ -731,92 +630,44 @@
         </main>
     </div>
 
-    <!-- DATA MANAGEMENT MODAL (NEW) -->
-    <div id="dataModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 style="font-size: 1.5rem; color: #667eea;">💾 Backup & Pindah Data</h3>
-                <button class="close-btn" onclick="closeDataModal()">×</button>
-            </div>
-            
-            <!-- SECTION 1: DOWNLOAD REKAP -->
-            <div class="data-section">
-                <h4>1. Download Rekap (Laporan Excel)</h4>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">
-                    Unduh data panggilan dalam format CSV (.csv) untuk pembuatan laporan manual di Excel.
-                </p>
-                <button class="btn btn-primary" onclick="downloadCSV()">📥 Download Laporan (.csv)</button>
-            </div>
-
-            <!-- SECTION 2: BACKUP & RESTORE -->
-            <div class="data-section" style="border-left: 3px solid #667eea;">
-                <h4>2. Pindah Laptop (Backup & Restore)</h4>
-                <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">
-                    Gunakan fitur ini untuk memindahkan data panggilan dari Laptop Lama ke Laptop Baru.
-                    <br>Format data adalah JSON (Database Internal).
-                </p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: center;">
-                    <div style="text-align: center;">
-                        <div class="form-label">Laptop Lama (Sumber)</div>
-                        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">Klik Download untuk menyimpan file Backup (.json).</p>
-                        <button class="btn btn-secondary" onclick="downloadBackup()">⬇️ Download Backup</button>
-                    </div>
-                    <div style="text-align: right;">
-                        <div class="form-label">Laptop Baru (Tujuan)</div>
-                        <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">Pilih file Backup (.json) lalu Upload.</p>
-                        
-                        <div class="btn-file">
-                            <button class="btn" style="background: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1;">
-                                📂 Pilih File Backup (.json)
-                            </button>
-                            <input type="file" id="fileUpload" accept=".json">
-                        </div>
-                        <br><br>
-                        <button class="btn btn-primary" onclick="restoreBackup()">⬆️ Upload & Restore Data</button>
-                    </div>
-                </div>
-            </div>
-
-            <div style="text-align: right; margin-top: 1rem;">
-                <button class="btn btn-secondary" onclick="closeDataModal()">Tutup</button>
-            </div>
-        </div>
-    </div>
-
     <script>
-        // --- 1. CONFIG & STORAGE ---
-        const STORAGE_KEY = 'call_logs_v3';
+        // --- FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyDP7-fXdhMaAUSxQaa-VZWQUKsLQcpvTvE",
+            authDomain: "command-center-cdb69.firebaseapp.com",
+            projectId: "command-center-cdb69",
+            storageBucket: "command-center-cdb69.firebasestorage.app",
+            messagingSenderId: "186919663224",
+            appId: "1:186919663224:web:042b5493ae487c2b5bdf8d",
+            measurementId: "G-SGNYVWP14S"
+        };
 
-        function getLogs() {
-            const logs = localStorage.getItem(STORAGE_KEY);
-            return logs ? JSON.parse(logs) : [];
-        }
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const logsCollection = db.collection('call_logs');
 
-        function saveLogsToStorage(logs) {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
-        }
+        // --- GLOBAL VARS ---
+        let allLogs = [];
+        let selectedLogId = null;
 
-        // --- 2. INIT (SET TIME) ---
+        // --- INIT ---
         window.onload = function() {
             const now = new Date();
-            // Format Date YYYY-MM-DD
             document.getElementById('callDate').value = now.toISOString().split('T')[0];
-            // Format Time HH:MM
             const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
             document.getElementById('callTime').value = timeString;
 
-            // Load Data from LocalStorage
-            loadLocalLogs();
+            loadFirebaseData();
         };
 
-        // --- 3. SAVE DATA (LOCAL STORAGE) ---
-        function saveLog() {
+        // --- SAVE TO FIREBASE ---
+        async function saveLog() {
             const date = document.getElementById('callDate').value;
             const time = document.getElementById('callTime').value;
             const name = document.getElementById('custName').value;
             const phone = document.getElementById('custPhone').value;
-            const pembiayaan = document.getElementById('custPembiayaan').value; // NEW FIELD
+            const pembiayaan = document.getElementById('custPembiayaan').value;
             const result = document.getElementById('callResult').value;
             const purpose = document.getElementById('callPurpose').value;
             const notes = document.getElementById('callNotes').value;
@@ -827,7 +678,6 @@
             }
 
             const newLog = {
-                id: Date.now().toString(),
                 date: date,
                 time: time,
                 name: name,
@@ -835,72 +685,68 @@
                 noPembiayaan: pembiayaan,
                 result: result,
                 purpose: purpose,
-                notes: notes
+                notes: notes,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
-            // Save to LocalStorage
-            const logs = getLogs();
-            logs.unshift(newLog); // Add to top (newest)
-            saveLogsToStorage(logs);
+            try {
+                const btn = document.querySelector('.btn-primary');
+                btn.textContent = '⏳ Menyimpan...';
+                btn.disabled = true;
 
-            // Update UI
-            resetForm();
-            loadLocalLogs();
+                await logsCollection.add(newLog);
+                
+                btn.textContent = '✅ Tersimpan!';
+                setTimeout(() => {
+                    btn.textContent = '💾 Simpan ke Cloud';
+                    btn.disabled = false;
+                }, 1500);
+
+                resetForm();
+                loadFirebaseData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        // --- LOAD FROM FIREBASE ---
+        async function loadFirebaseData() {
+            document.getElementById('loadingIndicator').style.display = 'block';
             
-            // Visual feedback
-            const btn = document.querySelector('.btn-primary');
-            const originalText = btn.textContent;
-            btn.textContent = "✅ Tersimpan!";
-            setTimeout(() => btn.textContent = originalText, 1000);
+            try {
+                const snapshot = await logsCollection.orderBy('timestamp', 'desc').get();
+                allLogs = [];
+                
+                snapshot.forEach(doc => {
+                    allLogs.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+
+                renderTable(allLogs);
+                updateDashboard(allLogs);
+                updateCharts(allLogs);
+                
+                document.getElementById('loadingIndicator').style.display = 'none';
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('loadingIndicator').innerHTML = '❌ Gagal memuat data: ' + error.message;
+            }
         }
 
-        function resetForm() {
-            // Reset time to now
-            const now = new Date();
-            document.getElementById('callDate').value = now.toISOString().split('T')[0];
-            const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('callTime').value = timeString;
-
-            // Reset inputs
-            document.getElementById('custName').value = '';
-            document.getElementById('custPhone').value = '';
-            document.getElementById('custPembiayaan').value = '';
-            document.getElementById('callPurpose').value = '';
-            document.getElementById('callNotes').value = '';
-            document.getElementById('callResult').selectedIndex = 0;
-        }
-
-        // --- 4. RENDER TABLE (LOCAL STORAGE) ---
-        let currentData = []; 
-        let selectedLogId = null;
-
-        function loadLocalLogs() {
-            const logs = getLogs();
-            currentData = logs;
-            renderLogTable(logs);
-            updateDashboard(logs);
-            updateCharts(logs);
-        }
-
-        function renderLogTable(data) {
-            const term = document.getElementById('searchLog').value.toLowerCase();
+        // --- RENDER TABLE ---
+        function renderTable(logs) {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
 
-            if (data.length === 0) {
+            if (logs.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#94a3b8; padding:2rem;">Belum ada data panggilan.</td></tr>';
                 return;
             }
 
-            // Filter search (Name, Phone, or No Pembiayaan)
-            const filteredLogs = data.filter(log => 
-                log.name.toLowerCase().includes(term) || 
-                log.phone.includes(term) || 
-                (log.noPembiayaan && log.noPembiayaan.toLowerCase().includes(term))
-            );
-
-            filteredLogs.forEach(log => {
-                // Badge color
+            logs.forEach(log => {
                 let badgeClass = 'status-badge bg-neutral';
                 if (log.result === 'Berhasil') badgeClass = 'status-badge bg-success';
                 else if (log.result === 'Sampai') badgeClass = 'status-badge bg-warning';
@@ -913,7 +759,6 @@
                         <td>${log.time}</td>
                         <td style="font-weight:600;">${log.name}</td>
                         <td>${log.phone}</td>
-                        <!-- NEW COLUMN -->
                         <td><code style="font-weight: bold; color: #333;">${log.noPembiayaan || '-'}</code></td>
                         <td>${log.purpose || '-'}</td>
                         <td><span class="${badgeClass}">${log.result}</span></td>
@@ -925,26 +770,34 @@
                 `;
                 tbody.innerHTML += row;
             });
+        }
 
-            // Reset selection
-            selectedLogId = null;
-            document.getElementById('btnDelete').disabled = true;
+        // --- FILTER TABLE ---
+        function filterTable() {
+            const term = document.getElementById('searchLog').value.toLowerCase();
+            const filtered = allLogs.filter(log => 
+                log.name.toLowerCase().includes(term) || 
+                log.phone.includes(term) || 
+                (log.noPembiayaan && log.noPembiayaan.toLowerCase().includes(term))
+            );
+            renderTable(filtered);
+        }
+
+        // --- DELETE LOG ---
+        async function deleteLog(id) {
+            if(!confirm('Hapus data panggilan ini dari cloud?')) return;
+
+            try {
+                await logsCollection.doc(id).delete();
+                loadFirebaseData();
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
         }
 
         function selectLog(id) {
             selectedLogId = id;
             document.getElementById('btnDelete').disabled = false;
-        }
-
-        // --- 5. DELETE DATA ---
-        function deleteLog(id) {
-            if(!confirm('Hapus data panggilan ini?')) return;
-
-            let logs = getLogs();
-            logs = logs.filter(log => log.id !== id);
-            saveLogsToStorage(logs);
-            
-            loadLocalLogs();
         }
 
         function deleteSelected() {
@@ -953,7 +806,7 @@
             }
         }
 
-        // --- 6. UPDATE DASHBOARD ---
+        // --- DASHBOARD ---
         function updateDashboard(logs) {
             const total = logs.length;
             const success = logs.filter(l => l.result === 'Berhasil').length;
@@ -969,19 +822,17 @@
             document.getElementById('successRate').textContent = rate + '%';
         }
 
-        // --- 7. UPDATE CHARTS ---
+        // --- CHARTS ---
         let outcomeChart = null;
         let hourChart = null;
 
         function updateCharts(logs) {
-            // Pie Data
             const outcomeData = {
                 'Berhasil': logs.filter(l => l.result === 'Berhasil').length,
                 'Sampai': logs.filter(l => l.result === 'Sampai').length,
                 'Tidak Berhasil': logs.filter(l => l.result === 'Tidak Angkat' || l.result === 'Tidak Tertarik').length
             };
 
-            // Hour Data
             const hours = Array(24).fill(0);
             logs.forEach(l => {
                 if(l.time) {
@@ -990,7 +841,6 @@
                 }
             });
 
-            // Render Pie Chart
             const ctx1 = document.getElementById('outcomeChart').getContext('2d');
             if (outcomeChart) outcomeChart.destroy();
 
@@ -1011,7 +861,6 @@
                 }
             });
 
-            // Render Hour Chart
             const ctx2 = document.getElementById('hourChart').getContext('2d');
             if (hourChart) hourChart.destroy();
 
@@ -1035,100 +884,43 @@
             });
         }
 
-        // --- 8. DATA MANAGEMENT FUNCTIONS (NEW) ---
-        
-        // A. OPEN/MODAL CLOSE
-        function openDataModal() {
-            document.getElementById('dataModal').classList.add('show');
+        // --- RESET FORM ---
+        function resetForm() {
+            const now = new Date();
+            document.getElementById('callDate').value = now.toISOString().split('T')[0];
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('callTime').value = timeString;
+
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            document.getElementById('custPembiayaan').value = '';
+            document.getElementById('callPurpose').value = '';
+            document.getElementById('callNotes').value = '';
+            document.getElementById('callResult').selectedIndex = 0;
         }
 
-        function closeDataModal() {
-            document.getElementById('dataModal').classList.remove('show');
-        }
-
-        // B. DOWNLOAD CSV (REKAP LAPORAN)
+        // --- DOWNLOAD CSV ---
         function downloadCSV() {
-            const logs = getLogs();
-            if (logs.length === 0) {
+            if (allLogs.length === 0) {
                 alert('Belum ada data untuk didownload.');
                 return;
             }
 
-            // Header CSV
-            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; // BOM for Excel UTF-8
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
             csvContent += "ID,Tanggal,Jam,Nama Nasabah,No Telepon,No Pembiayaan,Tujuan,Hasil,Catatan\n";
 
-            // Body CSV
-            logs.forEach(log => {
-                csvContent += `${log.id},"${log.date}","${log.time}","${log.name}","${log.phone}","${log.noPembiayaan || '-'}","${log.purpose || '-'}","${log.result}","${log.notes || ''}"\n`;
+            allLogs.forEach(log => {
+                csvContent += `"${log.id}","${log.date}","${log.time}","${log.name}","${log.phone}","${log.noPembiayaan || '-'}","${log.purpose || '-'}","${log.result}","${log.notes || ''}"\n`;
             });
 
-            // Trigger Download
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Laporan_Call_Center.csv");
+            link.setAttribute("download", "Laporan_Call_Center_Diqza_Cloud.csv");
             document.body.appendChild(link);
             link.click();
+            document.body.removeChild(link);
         }
-
-        // C. DOWNLOAD BACKUP (JSON) - UNTUK LAPTOP LAMA
-        function downloadBackup() {
-            const logs = getLogs();
-            if (logs.length === 0) {
-                alert('Belum ada data untuk dibackup.');
-                return;
-            }
-
-            // Convert to String JSON
-            const dataStr = JSON.stringify(logs, null, 2);
-            const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-
-            // Trigger Download
-            const link = document.createElement("a");
-            link.setAttribute("href", dataUri);
-            link.setAttribute("download", "backup_call_logs.json");
-            document.body.appendChild(link);
-            link.click();
-        }
-
-        // D. RESTORE BACKUP (JSON) - UNTUK LAPTOP BARU
-        function restoreBackup() {
-            const fileInput = document.getElementById('fileUpload');
-            const file = fileInput.files[0];
-
-            if (!file) {
-                alert('Mohon pilih file Backup (.json) terlebih dahulu.');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    // Validation: Pastikan Array
-                    if (Array.isArray(data)) {
-                        // OVERWRITE LocalStorage dengan data dari file
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                        
-                        alert('✅ Data berhasil dipulihkan ke Laptop Baru!');
-                        // Refresh UI
-                        loadLocalLogs();
-                        closeDataModal();
-                    } else {
-                        alert('❌ Format file salah. Pastikan file Backup (.json) yang benar.');
-                    }
-                } catch (error) {
-                    alert('❌ Gagal membaca file: ' + error);
-                }
-            };
-            
-            // Baca File sebagai Text
-            reader.readAsText(file);
-        }
-
     </script>
 </body>
 </html>
-
