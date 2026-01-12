@@ -578,7 +578,7 @@
         <!-- LEFT SIDEBAR: INPUT FORM -->
         <aside class="sidebar">
             <div class="logo-area">
-                <span>📞</span> DIQZA CALL
+                <span>📞</span> Log Book
             </div>
             <ul class="nav-menu">
                 <li class="nav-item active">
@@ -786,7 +786,7 @@
 
     <script>
         // --- 1. CONFIG & STORAGE ---
-        const STORAGE_KEY = 'diqza_call_logs_v3';
+        const STORAGE_KEY = 'call_logs_v3';
 
         function getLogs() {
             const logs = localStorage.getItem(STORAGE_KEY);
@@ -1067,7 +1067,7 @@
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
             link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Laporan_Call_Center_Diqza.csv");
+            link.setAttribute("download", "Laporan_Call_Center.csv");
             document.body.appendChild(link);
             link.click();
         }
@@ -1087,7 +1087,7 @@
             // Trigger Download
             const link = document.createElement("a");
             link.setAttribute("href", dataUri);
-            link.setAttribute("download", "backup_diqza_call_logs.json");
+            link.setAttribute("download", "backup_call_logs.json");
             document.body.appendChild(link);
             link.click();
         }
@@ -1131,3 +1131,4 @@
     </script>
 </body>
 </html>
+
