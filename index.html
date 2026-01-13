@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center Log Book v4.3 (Edit & Filter)</title>
+    <title>Command Center Log Book v4.3.1 (Clear Edit)</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -130,8 +130,26 @@
         }
         .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
-        .btn-warning { background: #f59e0b; color: white; display: none; } /* Hidden by default for Cancel Edit */
-        .btn-warning:hover { background: #d97706; }
+        
+        /* Tombol EDIT MODE */
+        .btn-edit-ok {
+            background: #10b981 !important; /* Hijau Terang */
+            color: white !important;
+            border: 2px solid #059669 !important;
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .btn-cancel-edit { 
+            background: #ef4444; color: white; display: none; width: 100%; margin-bottom: 0.8rem;
+            border: none; border-radius: 10px; font-weight: 600; cursor: pointer; padding: 0.9rem;
+        }
+        .btn-cancel-edit:hover { background: #dc2626; }
+        
         .btn-secondary { background: #f1f5f9; color: #64748b; }
         .btn-secondary:hover { background: #e2e8f0; }
         .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; width: auto; padding: 0.6rem 1.2rem; font-size: 0.9rem; }
@@ -225,7 +243,7 @@
                 <h1 style="font-size: 1.5rem; font-weight: 700; color: #667eea; display: flex; align-items: center; gap: 10px;">
                     <span>📞</span> Command Center Log Book
                 </h1>
-                <span style="font-size: 0.8rem; color: #64748b;">v4.3 Edit & Filter Fitur</span>
+                <span style="font-size: 0.8rem; color: #64748b;">v4.3.1 Tombol OK Jelas</span>
             </div>
             <div class="user-info">
                 <div style="text-align: right;">
@@ -326,8 +344,11 @@
                         <label class="form-label">Catatan Tambahan</label>
                         <textarea id="callNotes" class="form-input" placeholder="Detail percakapan..."></textarea>
                     </div>
+                    
+                    <!-- TOMBOL YANG BERUBAH SAAT EDIT -->
                     <button class="btn btn-primary" id="btnSave" onclick="handleSaveOrUpdate()">💾 Simpan ke Cloud</button>
-                    <button class="btn btn-warning" id="btnCancelEdit" onclick="cancelEdit()">🚫 Batal Edit</button>
+                    <button class="btn-cancel-edit" id="btnCancelEdit" onclick="cancelEdit()">🚫 BATAL / KELUAR DARI MODE EDIT</button>
+                    
                     <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset Form</button>
                 </div>
 
@@ -596,7 +617,6 @@
                 date: date, time: time, name: name, phone: phone, 
                 noPembiayaan: pembiayaan, result: result, purpose: purpose, notes: notes,
                 createdBy: currentUser.email, 
-                // timestamp: firebase.firestore.FieldValue.serverTimestamp() // Update doesn't necessarily need this, but if you want to update timestamp...
             };
 
             try {
@@ -620,7 +640,7 @@
             } catch (error) { alert('Error: ' + error.message); }
         }
 
-        // --- EDIT LOGIC ---
+        // --- EDIT LOGIC (UPDATED FOR OK BUTTON) ---
         function editLog(id) {
             const log = allLogs.find(l => l.id === id);
             if (!log) return;
@@ -639,14 +659,14 @@
             isEditing = true;
             currentEditId = id;
 
-            // 3. Update UI
-            document.getElementById('formTitle').innerHTML = `<span>✏️</span> Edit Data Log`;
-            document.getElementById('btnSave').innerText = '🔄 Update Data';
-            document.getElementById('btnSave').classList.replace('btn-primary', 'btn-warning'); // Change color to orange
-            document.getElementById('btnSave').classList.remove('btn-primary'); // remove purple
-            document.getElementById('btnSave').classList.add('btn-info'); // add blue/orange
-            document.getElementById('btnSave').style.background = '#f59e0b'; // Manual override for visual distinctness
-            document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+            // 3. Update UI - PERUBAHAN DI SINI
+            document.getElementById('formTitle').innerHTML = `<span>✏️</span> MODE EDIT DATA`;
+            
+            const btnSave = document.getElementById('btnSave');
+            btnSave.innerText = '✅ SIMPAN PERUBAHAN (OK)'; // Teks Jelas
+            btnSave.className = 'btn btn-edit-ok'; // Warna Hijau + Animasi Pulse
+            
+            document.getElementById('btnCancelEdit').style.display = 'inline-block';
 
             // 4. Scroll to Top
             window.scrollTo(0, 0);
@@ -672,8 +692,11 @@
             isEditing = false;
             currentEditId = null;
             document.getElementById('formTitle').innerHTML = `<span>✏️</span> Catat Panggilan Baru`;
-            document.getElementById('btnSave').innerText = '💾 Simpan ke Cloud';
-            document.getElementById('btnSave').style.background = ''; // Reset CSS
+            
+            const btnSave = document.getElementById('btnSave');
+            btnSave.innerText = '💾 Simpan ke Cloud';
+            btnSave.className = 'btn btn-primary'; // Kembali ke Warna Ungu
+            
             document.getElementById('btnCancelEdit').style.display = 'none';
         }
         
