@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center Log Book v4.2 (Reset Password)</title>
+    <title>Command Center Log Book v4.3 (Edit & Filter)</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -25,15 +25,8 @@
             overflow-x: hidden;
         }
 
-        /* --- AUTH SECTION (LOGIN) --- */
-        #auth-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            padding: 20px;
-        }
-
+        /* --- AUTH SECTION --- */
+        #auth-section { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; }
         .auth-card {
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(20px);
@@ -44,156 +37,59 @@
             max-width: 400px;
             text-align: center;
         }
-
-        .auth-title {
-            color: #667eea;
-            margin-bottom: 0.5rem;
-            font-size: 1.8rem;
-        }
-
-        .auth-subtitle {
-            color: #64748b;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
-        }
-
+        .auth-title { color: #667eea; margin-bottom: 0.5rem; font-size: 1.8rem; }
+        .auth-subtitle { color: #64748b; margin-bottom: 2rem; font-size: 0.9rem; }
         .auth-form input {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            outline: none;
-            transition: 0.3s;
+            width: 100%; padding: 12px; margin-bottom: 1rem; border: 2px solid #e2e8f0;
+            border-radius: 10px; outline: none; transition: 0.3s;
         }
-
-        .auth-form input:focus {
-            border-color: #667eea;
-        }
-
+        .auth-form input:focus { border-color: #667eea; }
         .btn-auth {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-bottom: 1rem;
+            width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
+            transition: 0.3s; margin-bottom: 1rem;
         }
-
-        .btn-auth:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .switch-auth {
-            font-size: 0.85rem;
-            color: #64748b;
-            margin-bottom: 10px;
-            display: block;
-        }
-
-        .switch-auth span {
-            color: #667eea;
-            cursor: pointer;
-            font-weight: 600;
-            text-decoration: underline;
-        }
-        
-        .forgot-link {
-            font-size: 0.8rem;
-            color: #64748b;
-            margin-top: -5px;
-            margin-bottom: 1rem;
-            display: block;
-            text-align: right;
-            cursor: pointer;
-        }
+        .btn-auth:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .switch-auth { font-size: 0.85rem; color: #64748b; margin-bottom: 10px; display: block; }
+        .switch-auth span { color: #667eea; cursor: pointer; font-weight: 600; text-decoration: underline; }
+        .forgot-link { font-size: 0.8rem; color: #64748b; margin-top: -5px; margin-bottom: 1rem; display: block; text-align: right; cursor: pointer; }
         .forgot-link:hover { color: #667eea; text-decoration: underline; }
 
-        /* --- APP SECTION (MAIN) --- */
+        /* --- APP SECTION --- */
         #app-section { display: none; }
-
+        
         /* --- TOPBAR --- */
         .topbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            color: #1e293b;
-            padding: 1.2rem 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            color: #1e293b; padding: 1.2rem 2rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            display: flex; justify-content: space-between; align-items: center;
         }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
+        .user-info { display: flex; align-items: center; gap: 15px; }
         .role-badge {
-            background: #f1f5f9;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: #64748b;
-            border: 1px solid #e2e8f0;
+            background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-size: 0.75rem;
+            font-weight: 700; color: #64748b; border: 1px solid #e2e8f0;
         }
         .role-admin { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
         .role-staff { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-
         .btn-logout {
-            padding: 8px 16px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: 0.3s;
+            padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 0.85rem; transition: 0.3s;
         }
         .btn-logout:hover { background: #dc2626; }
 
         /* --- CONTAINER --- */
-        .container {
-            max-width: 1400px;
-            margin: 2rem auto;
-            padding: 0 1.5rem;
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            gap: 2rem;
-        }
+        .container { max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem; display: grid; grid-template-columns: 380px 1fr; gap: 2rem; }
 
         /* --- SIDEBAR --- */
         .sidebar {
-            background: rgba(255, 255, 255, 0.9);
-            color: white;
-            padding: 2rem;
-            border-radius: 16px;
-            position: sticky;
-            top: 20px;
-            height: fit-content;
+            background: rgba(255, 255, 255, 0.9); color: white; padding: 2rem; border-radius: 16px;
+            position: sticky; top: 20px; height: fit-content;
         }
-
         .logo-area {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 2.5rem;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #667eea;
-            background: rgba(255,255,255,0.5);
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 1.5rem; font-weight: 700; margin-bottom: 2.5rem; display: flex;
+            align-items: center; gap: 12px; color: #667eea; background: rgba(255,255,255,0.5);
+            padding: 1rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.2);
         }
-
         .nav-menu { list-style: none; }
         .nav-item {
             padding: 1rem; margin-bottom: 0.5rem; border-radius: 10px; color: #94a3b8;
@@ -201,31 +97,20 @@
             font-weight: 600; transition: 0.2s; border: 1px solid transparent;
         }
         .nav-item:hover, .nav-item.active {
-            background: rgba(215, 253, 255, 0.3);
-            color: gray;
-            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(215, 253, 255, 0.3); color: gray; border-color: rgba(255, 255, 255, 0.3);
         }
 
         /* --- CARD --- */
         .card {
-            background: white;
-            border-radius: 16px;
-            padding: 2rem;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-            margin-bottom: 2rem;
+            background: white; border-radius: 16px; padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12); margin-bottom: 2rem;
             transition: transform 0.3s ease;
         }
         .card:hover { transform: translateY(-2px); }
         .card-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #667eea;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.8rem;
-            border-bottom: 3px solid #f1f5f9;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            font-size: 1.2rem; font-weight: 700; color: #667eea; margin-bottom: 1.5rem;
+            padding-bottom: 0.8rem; border-bottom: 3px solid #f1f5f9;
+            display: flex; align-items: center; gap: 8px;
         }
 
         /* --- FORM & BUTTONS --- */
@@ -237,12 +122,21 @@
         }
         .form-input:focus, .form-select:focus { border-color: #667eea; background: white; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1); }
         .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-        .btn { width: 100%; padding: 0.9rem 1.5rem; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.8rem; }
+        
+        .btn {
+            width: 100%; padding: 0.9rem 1.5rem; border: none; border-radius: 10px; font-size: 1rem;
+            font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex;
+            align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.8rem;
+        }
         .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
+        .btn-warning { background: #f59e0b; color: white; display: none; } /* Hidden by default for Cancel Edit */
+        .btn-warning:hover { background: #d97706; }
         .btn-secondary { background: #f1f5f9; color: #64748b; }
         .btn-secondary:hover { background: #e2e8f0; }
         .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; width: auto; padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+        .btn-info { background: #0ea5e9; color: white; width: auto; padding: 0.6rem 1.2rem; font-size: 0.9rem; }
+        .btn-info:hover { background: #0284c7; }
 
         /* --- STATS & CHARTS --- */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
@@ -254,8 +148,18 @@
         .chart-container { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); height: 280px; width: 100%; }
 
         /* --- TABLE --- */
-        .table-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; gap: 1rem; flex-wrap: wrap; }
-        .search-box { display: flex; align-items: center; background: #f8fafc; padding: 0.75rem 1.2rem; border: 2px solid #e2e8f0; border-radius: 10px; flex: 1; max-width: 400px; transition: all 0.2s; }
+        .table-controls {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;
+            gap: 1rem; flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex; gap: 10px; background: #f8fafc; padding: 0.75rem 1.2rem;
+            border: 2px solid #e2e8f0; border-radius: 10px; align-items: center;
+        }
+        .search-box {
+            display: flex; align-items: center; background: #f8fafc; padding: 0.75rem 1.2rem;
+            border: 2px solid #e2e8f0; border-radius: 10px; flex: 1; max-width: 400px; transition: all 0.2s;
+        }
         .search-box:focus-within { border-color: #667eea; background: white; }
         .search-box input { border: none; outline: none; width: 100%; margin-left: 0.5rem; font-size: 0.95rem; background: transparent; }
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
@@ -274,57 +178,43 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- RESPONSIVE --- */
-        @media (max-width: 1024px) { .container { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, 1fr); } .charts-row { grid-template-columns: 1fr; } }
+        @media (max-width: 1024px) { .container { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, 1fr); } .charts-row { grid-template-columns: 1fr; } .table-controls { flex-direction: column; align-items: stretch; } .filter-group { flex-direction: column; } }
         @media (max-width: 640px) { .topbar { flex-direction: column; gap: 0.5rem; text-align: center; } .input-group { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <!-- === AUTH SECTION (LOGIN) === -->
+    <!-- === AUTH SECTION === -->
     <div id="auth-section">
         <div class="auth-card">
             <div class="logo-area" style="justify-content: center; margin-bottom: 1.5rem;">
                 <span>📞</span> Command Center
             </div>
             
-            <!-- FORM LOGIN / REGISTER -->
             <div id="authForm">
                 <h2 class="auth-title" id="authHeader">Masuk Akun</h2>
                 <p class="auth-subtitle">Silakan login untuk akses Log Book</p>
-                
                 <div id="authMessage" style="color: red; margin-bottom: 10px; font-size: 0.9rem;"></div>
-
                 <form class="auth-form" onsubmit="handleAuth(event)">
                     <input type="email" id="authEmail" placeholder="Email Address" required>
                     <input type="password" id="authPass" placeholder="Password" required minlength="6">
                     <button type="submit" class="btn-auth" id="authBtn">Masuk Sekarang</button>
                 </form>
-
                 <span class="forgot-link" onclick="showResetPassword()">Lupa Password?</span>
-
-                <p class="switch-auth">
-                    <span id="toggleAuth" onclick="toggleAuthMode()">Belum punya akun? Daftar disini</span>
-                </p>
+                <p class="switch-auth"><span id="toggleAuth" onclick="toggleAuthMode()">Belum punya akun? Daftar disini</span></p>
             </div>
 
-            <!-- FORM RESET PASSWORD -->
             <div id="resetPasswordForm" style="display:none;">
                 <h2 class="auth-title">Reset Password</h2>
                 <p class="auth-subtitle">Masukkan email untuk menerima link reset</p>
-                
                 <div id="resetMessage" style="color: green; margin-bottom: 10px; font-size: 0.9rem;"></div>
                 <div id="resetError" style="color: red; margin-bottom: 10px; font-size: 0.9rem;"></div>
-
                 <form class="auth-form" onsubmit="handleResetPassword(event)">
                     <input type="email" id="resetEmail" placeholder="Masukkan Email Anda" required>
                     <button type="submit" class="btn-auth">Kirim Link Reset</button>
                 </form>
-
-                <p class="switch-auth">
-                    <span onclick="backToLogin()">Kembali ke Login</span>
-                </p>
+                <p class="switch-auth"><span onclick="backToLogin()">Kembali ke Login</span></p>
             </div>
-
         </div>
     </div>
 
@@ -335,7 +225,7 @@
                 <h1 style="font-size: 1.5rem; font-weight: 700; color: #667eea; display: flex; align-items: center; gap: 10px;">
                     <span>📞</span> Command Center Log Book
                 </h1>
-                <span style="font-size: 0.8rem; color: #64748b;">v4.2 Fitur Reset Password</span>
+                <span style="font-size: 0.8rem; color: #64748b;">v4.3 Edit & Filter Fitur</span>
             </div>
             <div class="user-info">
                 <div style="text-align: right;">
@@ -349,12 +239,10 @@
         <div class="container">
             <!-- LEFT SIDEBAR -->
             <aside class="sidebar">
-                <div class="logo-area">
-                    <span>📞</span> Log CALL
-                </div>
+                <div class="logo-area"><span>📞</span> Log CALL</div>
                 <ul class="nav-menu">
                     <li class="nav-item active"><span>📋</span> Log Book</li>
-                    <li class="nav-item" onclick="loadFirebaseData()"><span>🔄</span> Refresh Data</li>
+                    <li class="nav-item" onclick="resetAll()"><span>🔄</span> Refresh / Reset Data</li>
                     <li class="nav-item" onclick="downloadCSV()"><span>📥</span> Download Laporan</li>
                     <li class="nav-item" style="margin-top: 20px; color: #ef4444;" onclick="logout()"><span>🚪</span> Logout</li>
                 </ul>
@@ -367,7 +255,7 @@
                     <div class="stat-card">
                         <div class="stat-label">Total Panggilan</div>
                         <div class="stat-value" id="totalCalls">0</div>
-                        <div class="stat-sub">Semua Data</div>
+                        <div class="stat-sub">Data Terfilter</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-label">Berhasil (Deal)</div>
@@ -388,17 +276,13 @@
 
                 <!-- CHARTS -->
                 <div class="charts-row">
-                    <div class="chart-container">
-                        <canvas id="outcomeChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="hourChart"></canvas>
-                    </div>
+                    <div class="chart-container"><canvas id="outcomeChart"></canvas></div>
+                    <div class="chart-container"><canvas id="hourChart"></canvas></div>
                 </div>
 
                 <!-- INPUT FORM -->
                 <div class="card">
-                    <div class="card-title"><span>✏️</span> Catat Panggilan Baru</div>
+                    <div class="card-title" id="formTitle"><span>✏️</span> Catat Panggilan Baru</div>
                     <div class="input-group">
                         <div class="form-group">
                             <label class="form-label">Tanggal</label>
@@ -442,26 +326,35 @@
                         <label class="form-label">Catatan Tambahan</label>
                         <textarea id="callNotes" class="form-input" placeholder="Detail percakapan..."></textarea>
                     </div>
-                    <button class="btn btn-primary" onclick="saveLog()">💾 Simpan ke Cloud</button>
+                    <button class="btn btn-primary" id="btnSave" onclick="handleSaveOrUpdate()">💾 Simpan ke Cloud</button>
+                    <button class="btn btn-warning" id="btnCancelEdit" onclick="cancelEdit()">🚫 Batal Edit</button>
                     <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset Form</button>
                 </div>
 
                 <!-- DATA TABLE -->
                 <div class="card">
-                    <div class="card-title"><span>📋</span> Log Book Panggilan (Cloud)</div>
+                    <div class="card-title"><span>📋</span> Log Book Panggilan</div>
                     
                     <div class="table-controls">
+                        <!-- DATE FILTER -->
+                        <div class="filter-group">
+                            <span style="font-size:0.8rem; font-weight:600; color:#64748b;">Filter Tanggal:</span>
+                            <input type="date" id="filterStart" class="form-input" style="width:auto; padding:0.4rem;">
+                            <span style="color:#ccc;">-</span>
+                            <input type="date" id="filterEnd" class="form-input" style="width:auto; padding:0.4rem;">
+                            <button class="btn-info" onclick="applyDateFilter()">Filter</button>
+                            <button class="btn-secondary" style="width:auto; padding:0.5rem 1rem;" onclick="resetFilter()">Reset</button>
+                        </div>
+
+                        <!-- SEARCH -->
                         <div class="search-box">
                             <span>🔍</span>
                             <input type="text" id="searchLog" placeholder="Cari nama / no telp..." onkeyup="filterTable()">
                         </div>
-                        <!-- Hapus Hanya untuk Admin -->
-                        <button class="btn btn-danger" id="btnDelete" onclick="deleteSelected()" disabled>Hapus Terpilih</button>
                     </div>
 
                     <div id="loadingIndicator" class="loading" style="display:none;">
-                        <div class="spinner"></div>
-                        Memuat data dari cloud...
+                        <div class="spinner"></div> Memuat data...
                     </div>
 
                     <div style="overflow-x: auto; max-height: 500px; overflow-y: auto; border-radius: 8px;">
@@ -475,7 +368,7 @@
                                     <th>No. Telepon</th>
                                     <th>Hasil</th>
                                     <th>Catatan</th>
-                                    <th style="width: 60px;">Aksi</th>
+                                    <th style="width: 100px;">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody id="tableBody"></tbody>
@@ -487,7 +380,7 @@
     </div>
 
     <script>
-        // --- FIREBASE CONFIGURATION (UPDATED) ---
+        // --- CONFIG & INIT ---
         const firebaseConfig = {
           apiKey: "AIzaSyDBPfcvMdCHij0LoHwQCDTZB-5NRVJvb_g",
           authDomain: "command-center-ce42d.firebaseapp.com",
@@ -498,22 +391,24 @@
           measurementId: "G-BFPWLW15D4"
         };
 
-        // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
         const logsCollection = db.collection('call_logs');
         const usersCollection = db.collection('users');
 
-        // --- GLOBAL VARS ---
         let allLogs = [];
+        let filteredLogs = []; // Data yang sedang ditampilkan (bisa karena filter tanggal/search)
         let selectedLogId = null;
         let currentUser = null;
         let currentUserRole = 'staff';
+        
+        // EDIT MODE VARIABLES
+        let isEditing = false;
+        let currentEditId = null;
 
         // --- AUTH LOGIC ---
         let isLoginMode = true;
-
         function toggleAuthMode() {
             isLoginMode = !isLoginMode;
             const header = document.getElementById('authHeader');
@@ -521,49 +416,38 @@
             const toggle = document.getElementById('toggleAuth');
             const msg = document.getElementById('authMessage');
             const forgotLink = document.querySelector('.forgot-link');
-
             msg.innerText = "";
             if (isLoginMode) {
                 header.innerText = "Masuk Akun";
                 btn.innerText = "Masuk Sekarang";
                 toggle.innerText = "Belum punya akun? Daftar disini";
-                forgotLink.style.display = "block"; // Tampilkan link lupa pass saat mode login
+                forgotLink.style.display = "block";
             } else {
                 header.innerText = "Daftar Akun Baru";
                 btn.innerText = "Daftar Sekarang";
                 toggle.innerText = "Sudah punya akun? Login disini";
-                forgotLink.style.display = "none"; // Sembunyikan link lupa pass saat mode daftar
+                forgotLink.style.display = "none";
             }
         }
-
         async function handleAuth(e) {
             e.preventDefault();
             const email = document.getElementById('authEmail').value;
             const pass = document.getElementById('authPass').value;
             const btn = document.getElementById('authBtn');
             const msg = document.getElementById('authMessage');
-
             btn.disabled = true;
             btn.innerText = "⏳ Memproses...";
             msg.innerText = "";
-
             try {
                 if (isLoginMode) {
                     await auth.signInWithEmailAndPassword(email, pass);
                 } else {
                     const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
                     const user = userCredential.user;
-                    
                     const usersSnap = await usersCollection.limit(1).get();
                     let role = 'staff';
                     if (usersSnap.empty) role = 'admin'; 
-
-                    await usersCollection.doc(user.uid).set({
-                        email: email,
-                        role: role,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-
+                    await usersCollection.doc(user.uid).set({ email: email, role: role, createdAt: firebase.firestore.FieldValue.serverTimestamp() });
                     alert(`Selamat! Akun Anda telah dibuat dengan hak akses: ${role.toUpperCase()}`);
                 }
             } catch (error) {
@@ -572,71 +456,48 @@
                 btn.innerText = isLoginMode ? "Masuk Sekarang" : "Daftar Sekarang";
             }
         }
-
-        // --- RESET PASSWORD LOGIC ---
         function showResetPassword() {
             document.getElementById('authForm').style.display = 'none';
             document.getElementById('resetPasswordForm').style.display = 'block';
-            // Pre-fill email if user already typed it
             const currentEmail = document.getElementById('authEmail').value;
             document.getElementById('resetEmail').value = currentEmail;
         }
-
         function backToLogin() {
             document.getElementById('authForm').style.display = 'block';
             document.getElementById('resetPasswordForm').style.display = 'none';
             document.getElementById('resetError').innerText = '';
             document.getElementById('resetMessage').innerText = '';
         }
-
         async function handleResetPassword(e) {
             e.preventDefault();
             const email = document.getElementById('resetEmail').value;
             const msg = document.getElementById('resetMessage');
             const err = document.getElementById('resetError');
-
             msg.innerText = "Mengirim email...";
             err.innerText = "";
-
             try {
                 await auth.sendPasswordResetEmail(email);
-                msg.innerText = "Link reset password telah dikirim ke " + email + ". Cek inbox/spam Anda.";
-                setTimeout(() => {
-                    backToLogin();
-                }, 4000); // Auto back to login after 4 seconds
-            } catch (error) {
-                err.innerText = error.message;
-                msg.innerText = "";
-            }
+                msg.innerText = "Link reset password telah dikirim ke " + email + ".";
+                setTimeout(() => { backToLogin(); }, 4000);
+            } catch (error) { err.innerText = error.message; msg.innerText = ""; }
         }
-
         function logout() {
-            if(confirm("Yakin ingin keluar?")) {
-                auth.signOut();
-            }
+            if(confirm("Yakin ingin keluar?")) auth.signOut();
         }
 
-        // --- AUTH STATE LISTENER ---
+        // --- AUTH STATE ---
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 currentUser = user;
                 const userDoc = await usersCollection.doc(user.uid).get();
-                if (userDoc.exists) {
-                    currentUserRole = userDoc.data().role;
-                } else {
-                    currentUserRole = 'admin'; 
-                }
-
+                if (userDoc.exists) currentUserRole = userDoc.data().role; else currentUserRole = 'admin';
                 document.getElementById('displayEmail').innerText = user.email;
                 const roleBadge = document.getElementById('displayRole');
                 roleBadge.innerText = currentUserRole.toUpperCase();
                 roleBadge.className = `role-badge role-${currentUserRole}`;
-
                 applyPermissions();
-
                 document.getElementById('auth-section').style.display = 'none';
                 document.getElementById('app-section').style.display = 'block';
-
                 initApp();
             } else {
                 currentUser = null;
@@ -644,19 +505,6 @@
                 document.getElementById('app-section').style.display = 'none';
             }
         });
-
-        // --- PERMISSIONS ---
-        function applyPermissions() {
-            const deleteBtns = document.querySelectorAll('.btn-danger');
-            const deleteMainBtn = document.getElementById('btnDelete');
-
-            if (currentUserRole !== 'admin') {
-                deleteMainBtn.style.display = 'none';
-                deleteBtns.forEach(btn => btn.style.display = 'none');
-            } else {
-                deleteMainBtn.style.display = 'inline-flex';
-            }
-        }
 
         // --- INIT APP ---
         function initApp() {
@@ -667,8 +515,72 @@
             loadFirebaseData();
         }
 
-        // --- SAVE TO FIREBASE ---
-        async function saveLog() {
+        // --- LOAD DATA ---
+        async function loadFirebaseData() {
+            document.getElementById('loadingIndicator').style.display = 'block';
+            try {
+                const snapshot = await logsCollection.orderBy('timestamp', 'desc').get();
+                allLogs = [];
+                snapshot.forEach(doc => { allLogs.push({ id: doc.id, ...doc.data() }); });
+                // Default: Filtered Logs = All Logs
+                filteredLogs = [...allLogs];
+                
+                // Apply active filters if any
+                const start = document.getElementById('filterStart').value;
+                const end = document.getElementById('filterEnd').value;
+                if(start && end) {
+                    filteredLogs = filterByDateLogic(start, end);
+                }
+
+                const term = document.getElementById('searchLog').value.toLowerCase();
+                if(term) {
+                    filteredLogs = filteredLogs.filter(l => l.name.toLowerCase().includes(term) || l.phone.includes(term));
+                }
+
+                renderTable(filteredLogs);
+                updateDashboard(filteredLogs);
+                updateCharts(filteredLogs);
+            } catch (error) { console.error(error); }
+            document.getElementById('loadingIndicator').style.display = 'none';
+        }
+
+        // --- DATE FILTER LOGIC ---
+        function filterByDateLogic(start, end) {
+            return allLogs.filter(log => {
+                const logDate = log.date; // string "YYYY-MM-DD"
+                return logDate >= start && logDate <= end;
+            });
+        }
+
+        function applyDateFilter() {
+            const start = document.getElementById('filterStart').value;
+            const end = document.getElementById('filterEnd').value;
+
+            if(!start || !end) { alert("Pilih Tanggal Awal dan Akhir."); return; }
+
+            // 1. Filter Date
+            let tempLogs = filterByDateLogic(start, end);
+
+            // 2. Filter Search (combine logic)
+            const term = document.getElementById('searchLog').value.toLowerCase();
+            if(term) {
+                tempLogs = tempLogs.filter(l => l.name.toLowerCase().includes(term) || l.phone.includes(term));
+            }
+
+            filteredLogs = tempLogs;
+            renderTable(filteredLogs);
+            updateDashboard(filteredLogs);
+            updateCharts(filteredLogs);
+        }
+
+        function resetFilter() {
+            document.getElementById('filterStart').value = '';
+            document.getElementById('filterEnd').value = '';
+            loadFirebaseData(); // Reload all
+        }
+
+        // --- SAVE / UPDATE LOGIC ---
+        async function handleSaveOrUpdate() {
             const date = document.getElementById('callDate').value;
             const time = document.getElementById('callTime').value;
             const name = document.getElementById('custName').value;
@@ -680,47 +592,105 @@
 
             if (!name) { alert('Mohon isi minimal Nama Nasabah.'); return; }
 
-            const newLog = {
+            const logData = {
                 date: date, time: time, name: name, phone: phone, 
                 noPembiayaan: pembiayaan, result: result, purpose: purpose, notes: notes,
                 createdBy: currentUser.email, 
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                // timestamp: firebase.firestore.FieldValue.serverTimestamp() // Update doesn't necessarily need this, but if you want to update timestamp...
             };
 
             try {
-                const btn = document.querySelector('.btn-primary');
-                btn.textContent = '⏳ Menyimpan...';
+                const btn = document.getElementById('btnSave');
+                btn.textContent = '⏳ Proses...';
                 btn.disabled = true;
 
-                await logsCollection.add(newLog);
+                if (isEditing && currentEditId) {
+                    // UPDATE MODE
+                    await logsCollection.doc(currentEditId).update(logData);
+                    alert('Data berhasil diupdate!');
+                } else {
+                    // ADD MODE
+                    logData.timestamp = firebase.firestore.FieldValue.serverTimestamp();
+                    await logsCollection.add(logData);
+                }
                 
-                btn.textContent = '✅ Tersimpan!';
-                setTimeout(() => { btn.textContent = '💾 Simpan ke Cloud'; btn.disabled = false; }, 1500);
                 resetForm();
-                loadFirebaseData();
+                loadFirebaseData(); // Refresh table
+                
             } catch (error) { alert('Error: ' + error.message); }
         }
 
-        // --- LOAD DATA ---
-        async function loadFirebaseData() {
-            document.getElementById('loadingIndicator').style.display = 'block';
-            try {
-                const snapshot = await logsCollection.orderBy('timestamp', 'desc').get();
-                allLogs = [];
-                snapshot.forEach(doc => { allLogs.push({ id: doc.id, ...doc.data() }); });
-                renderTable(allLogs);
-                updateDashboard(allLogs);
-                updateCharts(allLogs);
-            } catch (error) { console.error(error); }
-            document.getElementById('loadingIndicator').style.display = 'none';
+        // --- EDIT LOGIC ---
+        function editLog(id) {
+            const log = allLogs.find(l => l.id === id);
+            if (!log) return;
+
+            // 1. Fill Form
+            document.getElementById('callDate').value = log.date;
+            document.getElementById('callTime').value = log.time;
+            document.getElementById('custName').value = log.name;
+            document.getElementById('custPhone').value = log.phone;
+            document.getElementById('custPembiayaan').value = log.noPembiayaan || '';
+            document.getElementById('callResult').value = log.result;
+            document.getElementById('callPurpose').value = log.purpose || '';
+            document.getElementById('callNotes').value = log.notes || '';
+
+            // 2. Set Mode Edit
+            isEditing = true;
+            currentEditId = id;
+
+            // 3. Update UI
+            document.getElementById('formTitle').innerHTML = `<span>✏️</span> Edit Data Log`;
+            document.getElementById('btnSave').innerText = '🔄 Update Data';
+            document.getElementById('btnSave').classList.replace('btn-primary', 'btn-warning'); // Change color to orange
+            document.getElementById('btnSave').classList.remove('btn-primary'); // remove purple
+            document.getElementById('btnSave').classList.add('btn-info'); // add blue/orange
+            document.getElementById('btnSave').style.background = '#f59e0b'; // Manual override for visual distinctness
+            document.getElementById('btnCancelEdit').style.display = 'inline-flex';
+
+            // 4. Scroll to Top
+            window.scrollTo(0, 0);
         }
 
-        // --- RENDER TABLE ---
+        function cancelEdit() {
+            resetForm();
+        }
+
+        function resetForm() {
+            const now = new Date();
+            document.getElementById('callDate').value = now.toISOString().split('T')[0];
+            const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('callTime').value = timeString;
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            document.getElementById('custPembiayaan').value = '';
+            document.getElementById('callPurpose').value = '';
+            document.getElementById('callNotes').value = '';
+            document.getElementById('callResult').selectedIndex = 0;
+
+            // Reset UI from Edit Mode
+            isEditing = false;
+            currentEditId = null;
+            document.getElementById('formTitle').innerHTML = `<span>✏️</span> Catat Panggilan Baru`;
+            document.getElementById('btnSave').innerText = '💾 Simpan ke Cloud';
+            document.getElementById('btnSave').style.background = ''; // Reset CSS
+            document.getElementById('btnCancelEdit').style.display = 'none';
+        }
+        
+        // Helper reset for sidebar
+        function resetAll() {
+            resetForm();
+            resetFilter();
+            document.getElementById('searchLog').value = '';
+            loadFirebaseData();
+        }
+
+        // --- RENDER & TABLE ---
         function renderTable(logs) {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-            if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Belum ada data.</td></tr>'; return; }
-
+            if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Tidak ada data yang cocok.</td></tr>'; return; }
+            
             logs.forEach(log => {
                 let badgeClass = 'status-badge bg-neutral';
                 if (log.result === 'Berhasil') badgeClass = 'status-badge bg-success';
@@ -728,8 +698,18 @@
                 else badgeClass = 'status-badge bg-danger';
 
                 const isAdmin = currentUserRole === 'admin';
+                
+                // Checkbox selection
                 const checkboxHtml = isAdmin ? `<td style="text-align:center;"><input type="radio" name="logSelect" onclick="selectLog('${log.id}')"></td>` : `<td style="text-align:center; color:#ccc;">-</td>`;
-                const deleteBtnHtml = isAdmin ? `<button class="btn btn-danger" style="padding:0.3rem 0.6rem;" onclick="deleteLog('${log.id}')">Hapus</button>` : `<span style="color:#ccc; font-size:0.8rem;">No Access</span>`;
+                
+                // Action Buttons
+                let actionHtml = `<span style="color:#ccc; font-size:0.8rem;">No Access</span>`;
+                if (isAdmin) {
+                    actionHtml = `
+                        <button class="btn-info" style="padding:0.3rem 0.6rem; margin-right:2px;" onclick="editLog('${log.id}')">✏️</button>
+                        <button class="btn-danger" style="padding:0.3rem 0.6rem;" onclick="deleteLog('${log.id}')">Hapus</button>
+                    `;
+                }
 
                 const row = `
                     <tr>
@@ -740,23 +720,29 @@
                         <td>${log.phone}</td>
                         <td><span class="${badgeClass}">${log.result}</span></td>
                         <td style="font-size:0.85rem; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${log.notes || '-'}</td>
-                        <td style="text-align:center;">${deleteBtnHtml}</td>
+                        <td style="text-align:center;">${actionHtml}</td>
                     </tr>
                 `;
                 tbody.innerHTML += row;
             });
         }
 
-        // --- FILTER ---
         function filterTable() {
             const term = document.getElementById('searchLog').value.toLowerCase();
-            const filtered = allLogs.filter(log => 
-                log.name.toLowerCase().includes(term) || log.phone.includes(term)
-            );
-            renderTable(filtered);
+            filteredLogs = allLogs.filter(log => log.name.toLowerCase().includes(term) || log.phone.includes(term));
+            
+            // Re-apply Date Filter if active
+            const start = document.getElementById('filterStart').value;
+            const end = document.getElementById('filterEnd').value;
+            if(start && end) {
+                 filteredLogs = filteredLogs.filter(log => log.date >= start && log.date <= end);
+            }
+
+            renderTable(filteredLogs);
+            updateDashboard(filteredLogs);
+            updateCharts(filteredLogs);
         }
 
-        // --- DELETE ---
         async function deleteLog(id) {
             if(!confirm('Hapus data ini?')) return;
             try { await logsCollection.doc(id).delete(); loadFirebaseData(); } catch (e) { alert(e.message); }
@@ -764,7 +750,7 @@
         function selectLog(id) { selectedLogId = id; document.getElementById('btnDelete').disabled = false; }
         function deleteSelected() { if(selectedLogId) deleteLog(selectedLogId); }
 
-        // --- DASHBOARD ---
+        // --- DASHBOARD & CHARTS ---
         function updateDashboard(logs) {
             const total = logs.length;
             const success = logs.filter(l => l.result === 'Berhasil').length;
@@ -777,17 +763,14 @@
             document.getElementById('successRate').textContent = total > 0 ? ((success / total) * 100).toFixed(1) + '%' : '0%';
         }
 
-        // --- CHARTS ---
         let outcomeChart = null;
         let hourChart = null;
-
         function updateCharts(logs) {
             const outcomeData = {
                 'Berhasil': logs.filter(l => l.result === 'Berhasil').length,
                 'Sampai': logs.filter(l => l.result === 'Sampai').length,
                 'Gagal': logs.filter(l => l.result === 'Tidak Angkat' || l.result === 'Tidak Tertarik').length
             };
-
             const hours = Array(24).fill(0);
             logs.forEach(l => { if(l.time) { const h = parseInt(l.time.split(':')[0]); if (!isNaN(h)) hours[h]++; } });
 
@@ -814,28 +797,30 @@
             });
         }
 
-        function resetForm() {
-            document.getElementById('custName').value = '';
-            document.getElementById('custPhone').value = '';
-            document.getElementById('custPembiayaan').value = '';
-            document.getElementById('callPurpose').value = '';
-            document.getElementById('callNotes').value = '';
-            document.getElementById('callResult').selectedIndex = 0;
-        }
-
         function downloadCSV() {
-            if (allLogs.length === 0) return alert('Tidak ada data.');
+            if (filteredLogs.length === 0) return alert('Tidak ada data untuk didownload.');
             let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
             csvContent += "Tanggal,Jam,Nama,No HP,Hasil,Catatan\n";
-            allLogs.forEach(log => {
+            filteredLogs.forEach(log => {
                 csvContent += `"${log.date}","${log.time}","${log.name}","${log.phone}","${log.result}","${log.notes || ''}"\n`;
             });
             const link = document.createElement("a");
             link.setAttribute("href", encodeURI(csvContent));
-            link.setAttribute("download", "Log_Book_Report.csv");
+            link.setAttribute("download", "Log_Report.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+        }
+        
+        // --- PERMISSIONS ---
+        function applyPermissions() {
+            const deleteMainBtn = document.getElementById('btnDelete');
+            // Logic handled in renderTable
+            if (currentUserRole !== 'admin') {
+                if(deleteMainBtn) deleteMainBtn.style.display = 'none';
+            } else {
+                if(deleteMainBtn) deleteMainBtn.style.display = 'inline-flex';
+            }
         }
     </script>
 </body>
