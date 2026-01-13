@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center Log Book v4.1 (Auth)</title>
+    <title>Command Center Log Book v4.2 (Reset Password)</title>
     
-    <!-- Firebase SDKs (Compat Version untuk Kemudahan Single File) -->
+    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -92,6 +92,8 @@
         .switch-auth {
             font-size: 0.85rem;
             color: #64748b;
+            margin-bottom: 10px;
+            display: block;
         }
 
         .switch-auth span {
@@ -100,11 +102,20 @@
             font-weight: 600;
             text-decoration: underline;
         }
+        
+        .forgot-link {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-top: -5px;
+            margin-bottom: 1rem;
+            display: block;
+            text-align: right;
+            cursor: pointer;
+        }
+        .forgot-link:hover { color: #667eea; text-decoration: underline; }
 
         /* --- APP SECTION (MAIN) --- */
-        #app-section {
-            display: none; /* Hidden by default until login */
-        }
+        #app-section { display: none; }
 
         /* --- TOPBAR --- */
         .topbar {
@@ -133,7 +144,6 @@
             color: #64748b;
             border: 1px solid #e2e8f0;
         }
-        
         .role-admin { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
         .role-staff { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
 
@@ -185,21 +195,11 @@
         }
 
         .nav-menu { list-style: none; }
-
         .nav-item {
-            padding: 1rem;
-            margin-bottom: 0.5rem;
-            border-radius: 10px;
-            color: #94a3b8;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            transition: 0.2s;
-            border: 1px solid transparent;
+            padding: 1rem; margin-bottom: 0.5rem; border-radius: 10px; color: #94a3b8;
+            cursor: pointer; display: flex; align-items: center; gap: 12px;
+            font-weight: 600; transition: 0.2s; border: 1px solid transparent;
         }
-
         .nav-item:hover, .nav-item.active {
             background: rgba(215, 253, 255, 0.3);
             color: gray;
@@ -215,9 +215,7 @@
             margin-bottom: 2rem;
             transition: transform 0.3s ease;
         }
-
         .card:hover { transform: translateY(-2px); }
-
         .card-title {
             font-size: 1.2rem;
             font-weight: 700;
@@ -233,21 +231,17 @@
         /* --- FORM & BUTTONS --- */
         .form-group { margin-bottom: 1.2rem; }
         .form-label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: #475569; }
-        
         .form-input, .form-select {
             width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px;
             font-size: 1rem; outline: none; transition: all 0.2s; background: #f8fafc;
         }
         .form-input:focus, .form-select:focus { border-color: #667eea; background: white; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1); }
-        
         .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-
         .btn { width: 100%; padding: 0.9rem 1.5rem; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.8rem; }
         .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
         .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
         .btn-secondary { background: #f1f5f9; color: #64748b; }
         .btn-secondary:hover { background: #e2e8f0; }
-        
         .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; width: auto; padding: 0.6rem 1.2rem; font-size: 0.9rem; }
 
         /* --- STATS & CHARTS --- */
@@ -256,7 +250,6 @@
         .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #667eea, #764ba2); }
         .stat-label { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
         .stat-value { font-size: 2.5rem; font-weight: 800; color: #667eea; line-height: 1; }
-
         .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
         .chart-container { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); height: 280px; width: 100%; }
 
@@ -265,7 +258,6 @@
         .search-box { display: flex; align-items: center; background: #f8fafc; padding: 0.75rem 1.2rem; border: 2px solid #e2e8f0; border-radius: 10px; flex: 1; max-width: 400px; transition: all 0.2s; }
         .search-box:focus-within { border-color: #667eea; background: white; }
         .search-box input { border: none; outline: none; width: 100%; margin-left: 0.5rem; font-size: 0.95rem; background: transparent; }
-        
         table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
         th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; text-align: left; font-weight: 600; position: sticky; top: 0; }
         td { padding: 1rem; border-bottom: 1px solid #f1f5f9; color: #475569; text-align: left; vertical-align: middle; }
@@ -294,20 +286,45 @@
             <div class="logo-area" style="justify-content: center; margin-bottom: 1.5rem;">
                 <span>📞</span> Command Center
             </div>
-            <h2 class="auth-title" id="authHeader">Masuk Akun</h2>
-            <p class="auth-subtitle">Silakan login untuk akses Log Book</p>
             
-            <div id="authMessage" style="color: red; margin-bottom: 10px; font-size: 0.9rem;"></div>
+            <!-- FORM LOGIN / REGISTER -->
+            <div id="authForm">
+                <h2 class="auth-title" id="authHeader">Masuk Akun</h2>
+                <p class="auth-subtitle">Silakan login untuk akses Log Book</p>
+                
+                <div id="authMessage" style="color: red; margin-bottom: 10px; font-size: 0.9rem;"></div>
 
-            <form class="auth-form" onsubmit="handleAuth(event)">
-                <input type="email" id="authEmail" placeholder="Email Address" required>
-                <input type="password" id="authPass" placeholder="Password" required minlength="6">
-                <button type="submit" class="btn-auth" id="authBtn">Masuk Sekarang</button>
-            </form>
+                <form class="auth-form" onsubmit="handleAuth(event)">
+                    <input type="email" id="authEmail" placeholder="Email Address" required>
+                    <input type="password" id="authPass" placeholder="Password" required minlength="6">
+                    <button type="submit" class="btn-auth" id="authBtn">Masuk Sekarang</button>
+                </form>
 
-            <p class="switch-auth">
-                <span id="toggleAuth" onclick="toggleAuthMode()">Belum punya akun? Daftar disini</span>
-            </p>
+                <span class="forgot-link" onclick="showResetPassword()">Lupa Password?</span>
+
+                <p class="switch-auth">
+                    <span id="toggleAuth" onclick="toggleAuthMode()">Belum punya akun? Daftar disini</span>
+                </p>
+            </div>
+
+            <!-- FORM RESET PASSWORD -->
+            <div id="resetPasswordForm" style="display:none;">
+                <h2 class="auth-title">Reset Password</h2>
+                <p class="auth-subtitle">Masukkan email untuk menerima link reset</p>
+                
+                <div id="resetMessage" style="color: green; margin-bottom: 10px; font-size: 0.9rem;"></div>
+                <div id="resetError" style="color: red; margin-bottom: 10px; font-size: 0.9rem;"></div>
+
+                <form class="auth-form" onsubmit="handleResetPassword(event)">
+                    <input type="email" id="resetEmail" placeholder="Masukkan Email Anda" required>
+                    <button type="submit" class="btn-auth">Kirim Link Reset</button>
+                </form>
+
+                <p class="switch-auth">
+                    <span onclick="backToLogin()">Kembali ke Login</span>
+                </p>
+            </div>
+
         </div>
     </div>
 
@@ -318,7 +335,7 @@
                 <h1 style="font-size: 1.5rem; font-weight: 700; color: #667eea; display: flex; align-items: center; gap: 10px;">
                     <span>📞</span> Command Center Log Book
                 </h1>
-                <span style="font-size: 0.8rem; color: #64748b;">v4.1 Auth & Role System</span>
+                <span style="font-size: 0.8rem; color: #64748b;">v4.2 Fitur Reset Password</span>
             </div>
             <div class="user-info">
                 <div style="text-align: right;">
@@ -492,7 +509,7 @@
         let allLogs = [];
         let selectedLogId = null;
         let currentUser = null;
-        let currentUserRole = 'staff'; // Default role
+        let currentUserRole = 'staff';
 
         // --- AUTH LOGIC ---
         let isLoginMode = true;
@@ -503,16 +520,19 @@
             const btn = document.getElementById('authBtn');
             const toggle = document.getElementById('toggleAuth');
             const msg = document.getElementById('authMessage');
+            const forgotLink = document.querySelector('.forgot-link');
 
-            msg.innerText = ""; // Clear error
+            msg.innerText = "";
             if (isLoginMode) {
                 header.innerText = "Masuk Akun";
                 btn.innerText = "Masuk Sekarang";
                 toggle.innerText = "Belum punya akun? Daftar disini";
+                forgotLink.style.display = "block"; // Tampilkan link lupa pass saat mode login
             } else {
                 header.innerText = "Daftar Akun Baru";
                 btn.innerText = "Daftar Sekarang";
                 toggle.innerText = "Sudah punya akun? Login disini";
+                forgotLink.style.display = "none"; // Sembunyikan link lupa pass saat mode daftar
             }
         }
 
@@ -531,19 +551,13 @@
                 if (isLoginMode) {
                     await auth.signInWithEmailAndPassword(email, pass);
                 } else {
-                    // REGISTER LOGIC
                     const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
                     const user = userCredential.user;
                     
-                    // LOGIC: First user becomes admin, rest are staff
                     const usersSnap = await usersCollection.limit(1).get();
                     let role = 'staff';
-                    
-                    if (usersSnap.empty) {
-                        role = 'admin'; // First user is Admin
-                    }
+                    if (usersSnap.empty) role = 'admin'; 
 
-                    // Save user role to Firestore
                     await usersCollection.doc(user.uid).set({
                         email: email,
                         role: role,
@@ -559,6 +573,43 @@
             }
         }
 
+        // --- RESET PASSWORD LOGIC ---
+        function showResetPassword() {
+            document.getElementById('authForm').style.display = 'none';
+            document.getElementById('resetPasswordForm').style.display = 'block';
+            // Pre-fill email if user already typed it
+            const currentEmail = document.getElementById('authEmail').value;
+            document.getElementById('resetEmail').value = currentEmail;
+        }
+
+        function backToLogin() {
+            document.getElementById('authForm').style.display = 'block';
+            document.getElementById('resetPasswordForm').style.display = 'none';
+            document.getElementById('resetError').innerText = '';
+            document.getElementById('resetMessage').innerText = '';
+        }
+
+        async function handleResetPassword(e) {
+            e.preventDefault();
+            const email = document.getElementById('resetEmail').value;
+            const msg = document.getElementById('resetMessage');
+            const err = document.getElementById('resetError');
+
+            msg.innerText = "Mengirim email...";
+            err.innerText = "";
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                msg.innerText = "Link reset password telah dikirim ke " + email + ". Cek inbox/spam Anda.";
+                setTimeout(() => {
+                    backToLogin();
+                }, 4000); // Auto back to login after 4 seconds
+            } catch (error) {
+                err.innerText = error.message;
+                msg.innerText = "";
+            }
+        }
+
         function logout() {
             if(confirm("Yakin ingin keluar?")) {
                 auth.signOut();
@@ -568,36 +619,26 @@
         // --- AUTH STATE LISTENER ---
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                // User Logged In
                 currentUser = user;
-                
-                // Fetch Role
                 const userDoc = await usersCollection.doc(user.uid).get();
                 if (userDoc.exists) {
                     currentUserRole = userDoc.data().role;
                 } else {
-                    // Fallback for existing users before role system
                     currentUserRole = 'admin'; 
                 }
 
-                // UI Updates
                 document.getElementById('displayEmail').innerText = user.email;
                 const roleBadge = document.getElementById('displayRole');
                 roleBadge.innerText = currentUserRole.toUpperCase();
                 roleBadge.className = `role-badge role-${currentUserRole}`;
 
-                // Apply Permissions
                 applyPermissions();
 
-                // Show App
                 document.getElementById('auth-section').style.display = 'none';
                 document.getElementById('app-section').style.display = 'block';
 
-                // Load App Data
                 initApp();
-
             } else {
-                // User Logged Out
                 currentUser = null;
                 document.getElementById('auth-section').style.display = 'flex';
                 document.getElementById('app-section').style.display = 'none';
@@ -610,12 +651,8 @@
             const deleteMainBtn = document.getElementById('btnDelete');
 
             if (currentUserRole !== 'admin') {
-                // Hide delete buttons for staff
                 deleteMainBtn.style.display = 'none';
                 deleteBtns.forEach(btn => btn.style.display = 'none');
-                
-                // Hide radio select column in table
-                // We handle this in renderTable
             } else {
                 deleteMainBtn.style.display = 'inline-flex';
             }
@@ -646,7 +683,7 @@
             const newLog = {
                 date: date, time: time, name: name, phone: phone, 
                 noPembiayaan: pembiayaan, result: result, purpose: purpose, notes: notes,
-                createdBy: currentUser.email, // Tracking who created the log
+                createdBy: currentUser.email, 
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
@@ -719,7 +756,7 @@
             renderTable(filtered);
         }
 
-        // --- DELETE (Admin Only) ---
+        // --- DELETE ---
         async function deleteLog(id) {
             if(!confirm('Hapus data ini?')) return;
             try { await logsCollection.doc(id).delete(); loadFirebaseData(); } catch (e) { alert(e.message); }
