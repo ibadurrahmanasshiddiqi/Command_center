@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Command Center Log Book v4.0 (Firebase Cloud)</title>
+    <title>Command Center Log Book v4.1 (Auth)</title>
     
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
     
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -21,6 +22,88 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             color: #333;
+            overflow-x: hidden;
+        }
+
+        /* --- AUTH SECTION (LOGIN) --- */
+        #auth-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            padding: 20px;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .auth-title {
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            font-size: 1.8rem;
+        }
+
+        .auth-subtitle {
+            color: #64748b;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+
+        .auth-form input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .auth-form input:focus {
+            border-color: #667eea;
+        }
+
+        .btn-auth {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 1rem;
+        }
+
+        .btn-auth:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .switch-auth {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .switch-auth span {
+            color: #667eea;
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: underline;
+        }
+
+        /* --- APP SECTION (MAIN) --- */
+        #app-section {
+            display: none; /* Hidden by default until login */
         }
 
         /* --- TOPBAR --- */
@@ -35,32 +118,36 @@
             align-items: center;
         }
 
-        .topbar h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .user-info {
             display: flex;
             align-items: center;
-            gap: 12px;
-            color: #667eea;
+            gap: 15px;
         }
 
-        .topbar .subtitle {
-            font-size: 0.9rem;
+        .role-badge {
+            background: #f1f5f9;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
             color: #64748b;
-            font-weight: 500;
+            border: 1px solid #e2e8f0;
         }
+        
+        .role-admin { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+        .role-staff { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
 
-        .cloud-badge {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        .btn-logout {
+            padding: 8px 16px;
+            background: #ef4444;
             color: white;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.3s;
         }
+        .btn-logout:hover { background: #dc2626; }
 
         /* --- CONTAINER --- */
         .container {
@@ -97,9 +184,7 @@
             border: 1px solid rgba(255,255,255,0.2);
         }
 
-        .nav-menu {
-            list-style: none;
-        }
+        .nav-menu { list-style: none; }
 
         .nav-item {
             padding: 1rem;
@@ -131,9 +216,7 @@
             transition: transform 0.3s ease;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-        }
+        .card:hover { transform: translateY(-2px); }
 
         .card-title {
             font-size: 1.2rem;
@@ -147,487 +230,243 @@
             gap: 8px;
         }
 
-        /* --- FORM INPUTS --- */
-        .form-group {
-            margin-bottom: 1.2rem;
+        /* --- FORM & BUTTONS --- */
+        .form-group { margin-bottom: 1.2rem; }
+        .form-label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem; color: #475569; }
+        
+        .form-input, .form-select {
+            width: 100%; padding: 0.75rem 1rem; border: 2px solid #e2e8f0; border-radius: 10px;
+            font-size: 1rem; outline: none; transition: all 0.2s; background: #f8fafc;
         }
+        .form-input:focus, .form-select:focus { border-color: #667eea; background: white; box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1); }
+        
+        .input-group { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #475569;
-        }
+        .btn { width: 100%; padding: 0.9rem 1.5rem; border: none; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 0.8rem; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5); }
+        .btn-secondary { background: #f1f5f9; color: #64748b; }
+        .btn-secondary:hover { background: #e2e8f0; }
+        
+        .btn-danger { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: white; width: auto; padding: 0.6rem 1.2rem; font-size: 0.9rem; }
 
-        .form-input,
-        .form-select {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.2s;
-            background: #f8fafc;
-        }
+        /* --- STATS & CHARTS --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1.2rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); text-align: center; position: relative; overflow: hidden; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #667eea, #764ba2); }
+        .stat-label { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.5rem; }
+        .stat-value { font-size: 2.5rem; font-weight: 800; color: #667eea; line-height: 1; }
 
-        .form-input:focus,
-        .form-select:focus {
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-
-        .input-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        textarea.form-input {
-            min-height: 90px;
-            resize: vertical;
-            font-family: inherit;
-        }
-
-        /* --- BUTTONS --- */
-        .btn {
-            width: 100%;
-            padding: 0.9rem 1.5rem;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 0.8rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        }
-
-        .btn-secondary {
-            background: #f1f5f9;
-            color: #64748b;
-        }
-
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            width: auto;
-            padding: 0.6rem 1.2rem;
-            font-size: 0.9rem;
-        }
-
-        /* --- STATS GRID --- */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1.2rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: #64748b;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #667eea;
-            line-height: 1;
-        }
-
-        .stat-sub {
-            font-size: 0.8rem;
-            color: #10b981;
-            margin-top: 0.5rem;
-            font-weight: 600;
-        }
-
-        /* --- CHARTS --- */
-        .charts-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .chart-container {
-            background: white;
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            height: 280px;
-            width: 100%;
-        }
+        .charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .chart-container { background: white; border-radius: 12px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); height: 280px; width: 100%; }
 
         /* --- TABLE --- */
-        .table-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.2rem;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
+        .table-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; gap: 1rem; flex-wrap: wrap; }
+        .search-box { display: flex; align-items: center; background: #f8fafc; padding: 0.75rem 1.2rem; border: 2px solid #e2e8f0; border-radius: 10px; flex: 1; max-width: 400px; transition: all 0.2s; }
+        .search-box:focus-within { border-color: #667eea; background: white; }
+        .search-box input { border: none; outline: none; width: 100%; margin-left: 0.5rem; font-size: 0.95rem; background: transparent; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem; text-align: left; font-weight: 600; position: sticky; top: 0; }
+        td { padding: 1rem; border-bottom: 1px solid #f1f5f9; color: #475569; text-align: left; vertical-align: middle; }
+        tbody tr:hover { background: #f8fafc; }
 
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: #f8fafc;
-            padding: 0.75rem 1.2rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            flex: 1;
-            max-width: 400px;
-            transition: all 0.2s;
-        }
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; display: inline-block; text-transform: uppercase; letter-spacing: 0.5px; }
+        .bg-success { background: #10b981; color: white; }
+        .bg-warning { background: #f59e0b; color: white; }
+        .bg-danger { background: #ef4444; color: white; }
+        .bg-neutral { background: #6b7280; color: white; }
 
-        .search-box:focus-within {
-            border-color: #667eea;
-            background: white;
-        }
-
-        .search-box input {
-            border: none;
-            outline: none;
-            width: 100%;
-            margin-left: 0.5rem;
-            font-size: 0.95rem;
-            background: transparent;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-        }
-
-        th {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1rem;
-            text-align: left;
-            font-weight: 600;
-            position: sticky;
-            top: 0;
-        }
-
-        td {
-            padding: 1rem;
-            border-bottom: 1px solid #f1f5f9;
-            color: #475569;
-            text-align: left;
-            vertical-align: middle;
-        }
-
-        tbody tr {
-            transition: background 0.2s;
-        }
-
-        tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        /* --- BADGES --- */
-        .status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            display: inline-block;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .bg-success {
-            background: #10b981;
-            color: white;
-        }
-
-        .bg-warning {
-            background: #f59e0b;
-            color: white;
-        }
-
-        .bg-danger {
-            background: #ef4444;
-            color: white;
-        }
-
-        .bg-neutral {
-            background: #6b7280;
-            color: white;
-        }
-
-        /* Loading Spinner */
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #667eea;
-            font-weight: 600;
-        }
-
-        .spinner {
-            border: 4px solid #f3f4f6;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        .loading { text-align: center; padding: 2rem; color: #667eea; font-weight: 600; }
+        .spinner { border: 4px solid #f3f4f6; border-top: 4px solid #667eea; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- RESPONSIVE --- */
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .charts-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .topbar {
-                flex-direction: column;
-                gap: 0.5rem;
-                text-align: center;
-            }
-
-            .input-group {
-                grid-template-columns: 1fr;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        @media (max-width: 1024px) { .container { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: repeat(2, 1fr); } .charts-row { grid-template-columns: 1fr; } }
+        @media (max-width: 640px) { .topbar { flex-direction: column; gap: 0.5rem; text-align: center; } .input-group { grid-template-columns: 1fr; } .stats-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
-    <header class="topbar">
-        <h1>
-            <span>📞</span> Command Center Log Book
-        </h1>
-        <div>
-            <span class="cloud-badge">☁️ Cloud Storage Active</span>
+    <!-- === AUTH SECTION (LOGIN) === -->
+    <div id="auth-section">
+        <div class="auth-card">
+            <div class="logo-area" style="justify-content: center; margin-bottom: 1.5rem;">
+                <span>📞</span> Command Center
+            </div>
+            <h2 class="auth-title" id="authHeader">Masuk Akun</h2>
+            <p class="auth-subtitle">Silakan login untuk akses Log Book</p>
+            
+            <div id="authMessage" style="color: red; margin-bottom: 10px; font-size: 0.9rem;"></div>
+
+            <form class="auth-form" onsubmit="handleAuth(event)">
+                <input type="email" id="authEmail" placeholder="Email Address" required>
+                <input type="password" id="authPass" placeholder="Password" required minlength="6">
+                <button type="submit" class="btn-auth" id="authBtn">Masuk Sekarang</button>
+            </form>
+
+            <p class="switch-auth">
+                <span id="toggleAuth" onclick="toggleAuthMode()">Belum punya akun? Daftar disini</span>
+            </p>
         </div>
-    </header>
+    </div>
 
-    <div class="container">
-        <!-- LEFT SIDEBAR -->
-        <aside class="sidebar">
-            <div class="logo-area">
-                <span>📞</span> Log CALL
+    <!-- === MAIN APP SECTION === -->
+    <div id="app-section">
+        <header class="topbar">
+            <div>
+                <h1 style="font-size: 1.5rem; font-weight: 700; color: #667eea; display: flex; align-items: center; gap: 10px;">
+                    <span>📞</span> Command Center Log Book
+                </h1>
+                <span style="font-size: 0.8rem; color: #64748b;">v4.1 Auth & Role System</span>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item active">
-                    <span>📋</span> Log Book
-                </li>
-                <li class="nav-item" onclick="window.location.reload()">
-                    <span>🔄</span> Refresh Data
-                </li>
-                <li class="nav-item" onclick="downloadCSV()">
-                    <span>📥</span> Download Laporan
-                </li>
-            </ul>
-        </aside>
-
-        <!-- RIGHT MAIN -->
-        <main>
-            <!-- DASHBOARD STATS -->
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Panggilan</div>
-                    <div class="stat-value" id="totalCalls">0</div>
-                    <div class="stat-sub">Semua Data</div>
+            <div class="user-info">
+                <div style="text-align: right;">
+                    <div id="displayEmail" style="font-weight: 600; font-size: 0.9rem;">user@email.com</div>
+                    <span id="displayRole" class="role-badge role-admin">ADMIN</span>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Berhasil (Deal)</div>
-                    <div class="stat-value" style="color: #10b981;" id="successCalls">0</div>
-                    <div class="stat-sub" id="successRate">0%</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Follow Up</div>
-                    <div class="stat-value" style="color: #f59e0b;" id="followupCalls">0</div>
-                    <div class="stat-sub">Perlu Hubungi</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Tidak Berhasil</div>
-                    <div class="stat-value" style="color: #ef4444;" id="failCalls">0</div>
-                    <div class="stat-sub">Tidak Angkat/Minat</div>
-                </div>
+                <button class="btn-logout" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Keluar</button>
             </div>
+        </header>
 
-            <!-- CHARTS -->
-            <div class="charts-row">
-                <div class="chart-container">
-                    <canvas id="outcomeChart"></canvas>
+        <div class="container">
+            <!-- LEFT SIDEBAR -->
+            <aside class="sidebar">
+                <div class="logo-area">
+                    <span>📞</span> Log CALL
                 </div>
-                <div class="chart-container">
-                    <canvas id="hourChart"></canvas>
-                </div>
-            </div>
+                <ul class="nav-menu">
+                    <li class="nav-item active"><span>📋</span> Log Book</li>
+                    <li class="nav-item" onclick="loadFirebaseData()"><span>🔄</span> Refresh Data</li>
+                    <li class="nav-item" onclick="downloadCSV()"><span>📥</span> Download Laporan</li>
+                    <li class="nav-item" style="margin-top: 20px; color: #ef4444;" onclick="logout()"><span>🚪</span> Logout</li>
+                </ul>
+            </aside>
 
-            <!-- INPUT FORM -->
-            <div class="card">
-                <div class="card-title">
-                    <span>✏️</span> Catat Panggilan Baru
+            <!-- RIGHT MAIN -->
+            <main>
+                <!-- DASHBOARD STATS -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total Panggilan</div>
+                        <div class="stat-value" id="totalCalls">0</div>
+                        <div class="stat-sub">Semua Data</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Berhasil (Deal)</div>
+                        <div class="stat-value" style="color: #10b981;" id="successCalls">0</div>
+                        <div class="stat-sub" id="successRate">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Follow Up</div>
+                        <div class="stat-value" style="color: #f59e0b;" id="followupCalls">0</div>
+                        <div class="stat-sub">Perlu Hubungi</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tidak Berhasil</div>
+                        <div class="stat-value" style="color: #ef4444;" id="failCalls">0</div>
+                        <div class="stat-sub">Tidak Angkat/Minat</div>
+                    </div>
                 </div>
-                
-                <div class="input-group">
-                    <div class="form-group">
-                        <label class="form-label">Tanggal</label>
-                        <input type="date" id="callDate" class="form-input" required>
+
+                <!-- CHARTS -->
+                <div class="charts-row">
+                    <div class="chart-container">
+                        <canvas id="outcomeChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="hourChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- INPUT FORM -->
+                <div class="card">
+                    <div class="card-title"><span>✏️</span> Catat Panggilan Baru</div>
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label class="form-label">Tanggal</label>
+                            <input type="date" id="callDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Jam</label>
+                            <input type="time" id="callTime" class="form-input" required>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Jam</label>
-                        <input type="time" id="callTime" class="form-input" required>
+                        <label class="form-label">Nama Nasabah *</label>
+                        <input type="text" id="custName" class="form-input" placeholder="Contoh: PT Maju Jaya">
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Nama Nasabah *</label>
-                    <input type="text" id="custName" class="form-input" placeholder="Contoh: PT Maju Jaya">
-                </div>
-
-                <div class="input-group">
-                    <div class="form-group">
-                        <label class="form-label">Nomor Telepon</label>
-                        <input type="tel" id="custPhone" class="form-input" placeholder="0812...">
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label class="form-label">Nomor Telepon</label>
+                            <input type="tel" id="custPhone" class="form-input" placeholder="0812...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">No. Pembiayaan</label>
+                            <input type="text" id="custPembiayaan" class="form-input" placeholder="12345">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">No. Pembiayaan</label>
-                        <input type="text" id="custPembiayaan" class="form-input" placeholder="12345">
-                    </div>
-                </div>
-
-                <div class="input-group">
-                    <div class="form-group">
-                        <label class="form-label">Hasil Panggilan</label>
-                        <select id="callResult" class="form-select">
-                            <option value="Berhasil">✅ Berhasil / Deal</option>
-                            <option value="Sampai">📞 Sampai (Follow-up)</option>
-                            <option value="Tidak Angkat">🚫 Tidak Angkat</option>
-                            <option value="Tidak Tertarik">🙅 Tidak Tertarik</option>
-                        </select>
+                    <div class="input-group">
+                        <div class="form-group">
+                            <label class="form-label">Hasil Panggilan</label>
+                            <select id="callResult" class="form-select">
+                                <option value="Berhasil">✅ Berhasil / Deal</option>
+                                <option value="Sampai">📞 Sampai (Follow-up)</option>
+                                <option value="Tidak Angkat">🚫 Tidak Angkat</option>
+                                <option value="Tidak Tertarik">🙅 Tidak Tertarik</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Tujuan Telepon</label>
+                            <input type="text" id="callPurpose" class="form-input" placeholder="e.g. Follow up">
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Tujuan Telepon</label>
-                        <input type="text" id="callPurpose" class="form-input" placeholder="e.g. Follow up">
+                        <label class="form-label">Catatan Tambahan</label>
+                        <textarea id="callNotes" class="form-input" placeholder="Detail percakapan..."></textarea>
+                    </div>
+                    <button class="btn btn-primary" onclick="saveLog()">💾 Simpan ke Cloud</button>
+                    <button class="btn btn-secondary" onclick="resetForm()">🔄 Reset Form</button>
+                </div>
+
+                <!-- DATA TABLE -->
+                <div class="card">
+                    <div class="card-title"><span>📋</span> Log Book Panggilan (Cloud)</div>
+                    
+                    <div class="table-controls">
+                        <div class="search-box">
+                            <span>🔍</span>
+                            <input type="text" id="searchLog" placeholder="Cari nama / no telp..." onkeyup="filterTable()">
+                        </div>
+                        <!-- Hapus Hanya untuk Admin -->
+                        <button class="btn btn-danger" id="btnDelete" onclick="deleteSelected()" disabled>Hapus Terpilih</button>
+                    </div>
+
+                    <div id="loadingIndicator" class="loading" style="display:none;">
+                        <div class="spinner"></div>
+                        Memuat data dari cloud...
+                    </div>
+
+                    <div style="overflow-x: auto; max-height: 500px; overflow-y: auto; border-radius: 8px;">
+                        <table id="logTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">Pilih</th>
+                                    <th>Tanggal</th>
+                                    <th>Jam</th>
+                                    <th>Nama Nasabah</th>
+                                    <th>No. Telepon</th>
+                                    <th>Hasil</th>
+                                    <th>Catatan</th>
+                                    <th style="width: 60px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody"></tbody>
+                        </table>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">Catatan Tambahan</label>
-                    <textarea id="callNotes" class="form-input" placeholder="Detail percakapan..."></textarea>
-                </div>
-
-                <button class="btn btn-primary" onclick="saveLog()">
-                    💾 Simpan ke Cloud
-                </button>
-                <button class="btn btn-secondary" onclick="resetForm()">
-                    🔄 Reset Form
-                </button>
-            </div>
-
-            <!-- DATA TABLE -->
-            <div class="card">
-                <div class="card-title">
-                    <span>📋</span> Log Book Panggilan (Cloud)
-                </div>
-                
-                <div class="table-controls">
-                    <div class="search-box">
-                        <span>🔍</span>
-                        <input type="text" id="searchLog" placeholder="Cari nama / no telp / no pembiayaan..." onkeyup="filterTable()">
-                    </div>
-                    <button class="btn btn-danger" onclick="deleteSelected()" id="btnDelete" disabled>Hapus Terpilih</button>
-                </div>
-
-                <div id="loadingIndicator" class="loading" style="display:none;">
-                    <div class="spinner"></div>
-                    Memuat data dari cloud...
-                </div>
-
-                <div style="overflow-x: auto; max-height: 500px; overflow-y: auto; border-radius: 8px;">
-                    <table id="logTable">
-                        <thead>
-                            <tr>
-                                <th style="width: 50px;">Pilih</th>
-                                <th>Tanggal</th>
-                                <th>Jam</th>
-                                <th>Nama Nasabah</th>
-                                <th>No. Telepon</th>
-                                <th>No. Pembiayaan</th>
-                                <th>Tujuan</th>
-                                <th>Hasil</th>
-                                <th>Catatan</th>
-                                <th style="width: 60px;">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody">
-                            <!-- Firebase Data -->
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
 
     <script>
@@ -645,21 +484,152 @@
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();
         const logsCollection = db.collection('call_logs');
+        const usersCollection = db.collection('users');
 
         // --- GLOBAL VARS ---
         let allLogs = [];
         let selectedLogId = null;
+        let currentUser = null;
+        let currentUserRole = 'staff'; // Default role
 
-        // --- INIT ---
-        window.onload = function() {
+        // --- AUTH LOGIC ---
+        let isLoginMode = true;
+
+        function toggleAuthMode() {
+            isLoginMode = !isLoginMode;
+            const header = document.getElementById('authHeader');
+            const btn = document.getElementById('authBtn');
+            const toggle = document.getElementById('toggleAuth');
+            const msg = document.getElementById('authMessage');
+
+            msg.innerText = ""; // Clear error
+            if (isLoginMode) {
+                header.innerText = "Masuk Akun";
+                btn.innerText = "Masuk Sekarang";
+                toggle.innerText = "Belum punya akun? Daftar disini";
+            } else {
+                header.innerText = "Daftar Akun Baru";
+                btn.innerText = "Daftar Sekarang";
+                toggle.innerText = "Sudah punya akun? Login disini";
+            }
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+            const pass = document.getElementById('authPass').value;
+            const btn = document.getElementById('authBtn');
+            const msg = document.getElementById('authMessage');
+
+            btn.disabled = true;
+            btn.innerText = "⏳ Memproses...";
+            msg.innerText = "";
+
+            try {
+                if (isLoginMode) {
+                    await auth.signInWithEmailAndPassword(email, pass);
+                } else {
+                    // REGISTER LOGIC
+                    const userCredential = await auth.createUserWithEmailAndPassword(email, pass);
+                    const user = userCredential.user;
+                    
+                    // LOGIC: First user becomes admin, rest are staff
+                    // Check if any users exist
+                    const usersSnap = await usersCollection.limit(1).get();
+                    let role = 'staff';
+                    
+                    if (usersSnap.empty) {
+                        role = 'admin'; // First user is Admin
+                    }
+
+                    // Save user role to Firestore
+                    await usersCollection.doc(user.uid).set({
+                        email: email,
+                        role: role,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    alert(`Selamat! Akun Anda telah dibuat dengan hak akses: ${role.toUpperCase()}`);
+                }
+            } catch (error) {
+                msg.innerText = error.message;
+                btn.disabled = false;
+                btn.innerText = isLoginMode ? "Masuk Sekarang" : "Daftar Sekarang";
+            }
+        }
+
+        function logout() {
+            if(confirm("Yakin ingin keluar?")) {
+                auth.signOut();
+            }
+        }
+
+        // --- AUTH STATE LISTENER ---
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                // User Logged In
+                currentUser = user;
+                
+                // Fetch Role
+                const userDoc = await usersCollection.doc(user.uid).get();
+                if (userDoc.exists) {
+                    currentUserRole = userDoc.data().role;
+                } else {
+                    // Fallback for existing users before role system
+                    currentUserRole = 'admin'; 
+                }
+
+                // UI Updates
+                document.getElementById('displayEmail').innerText = user.email;
+                const roleBadge = document.getElementById('displayRole');
+                roleBadge.innerText = currentUserRole.toUpperCase();
+                roleBadge.className = `role-badge role-${currentUserRole}`;
+
+                // Apply Permissions
+                applyPermissions();
+
+                // Show App
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('app-section').style.display = 'block';
+
+                // Load App Data
+                initApp();
+
+            } else {
+                // User Logged Out
+                currentUser = null;
+                document.getElementById('auth-section').style.display = 'flex';
+                document.getElementById('app-section').style.display = 'none';
+            }
+        });
+
+        // --- PERMISSIONS ---
+        function applyPermissions() {
+            const deleteBtns = document.querySelectorAll('.btn-danger');
+            const deleteMainBtn = document.getElementById('btnDelete');
+
+            if (currentUserRole !== 'admin') {
+                // Hide delete buttons for staff
+                deleteMainBtn.style.display = 'none';
+                deleteBtns.forEach(btn => btn.style.display = 'none');
+                
+                // Hide radio select column in table
+                // We handle this in renderTable
+            } else {
+                deleteMainBtn.style.display = 'inline-flex';
+            }
+        }
+
+        // --- INIT APP ---
+        function initApp() {
             const now = new Date();
             document.getElementById('callDate').value = now.toISOString().split('T')[0];
             const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
             document.getElementById('callTime').value = timeString;
-
             loadFirebaseData();
-        };
+        }
 
         // --- SAVE TO FIREBASE ---
         async function saveLog() {
@@ -672,20 +642,12 @@
             const purpose = document.getElementById('callPurpose').value;
             const notes = document.getElementById('callNotes').value;
 
-            if (!name) {
-                alert('Mohon isi minimal Nama Nasabah.');
-                return;
-            }
+            if (!name) { alert('Mohon isi minimal Nama Nasabah.'); return; }
 
             const newLog = {
-                date: date,
-                time: time,
-                name: name,
-                phone: phone,
-                noPembiayaan: pembiayaan,
-                result: result,
-                purpose: purpose,
-                notes: notes,
+                date: date, time: time, name: name, phone: phone, 
+                noPembiayaan: pembiayaan, result: result, purpose: purpose, notes: notes,
+                createdBy: currentUser.email, // Tracking who created the log
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
 
@@ -697,54 +659,31 @@
                 await logsCollection.add(newLog);
                 
                 btn.textContent = '✅ Tersimpan!';
-                setTimeout(() => {
-                    btn.textContent = '💾 Simpan ke Cloud';
-                    btn.disabled = false;
-                }, 1500);
-
+                setTimeout(() => { btn.textContent = '💾 Simpan ke Cloud'; btn.disabled = false; }, 1500);
                 resetForm();
                 loadFirebaseData();
-            } catch (error) {
-                alert('Error: ' + error.message);
-                console.error(error);
-            }
+            } catch (error) { alert('Error: ' + error.message); }
         }
 
-        // --- LOAD FROM FIREBASE ---
+        // --- LOAD DATA ---
         async function loadFirebaseData() {
             document.getElementById('loadingIndicator').style.display = 'block';
-            
             try {
                 const snapshot = await logsCollection.orderBy('timestamp', 'desc').get();
                 allLogs = [];
-                
-                snapshot.forEach(doc => {
-                    allLogs.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
-
+                snapshot.forEach(doc => { allLogs.push({ id: doc.id, ...doc.data() }); });
                 renderTable(allLogs);
                 updateDashboard(allLogs);
                 updateCharts(allLogs);
-                
-                document.getElementById('loadingIndicator').style.display = 'none';
-            } catch (error) {
-                console.error('Error loading data:', error);
-                document.getElementById('loadingIndicator').innerHTML = '❌ Gagal memuat data: ' + error.message;
-            }
+            } catch (error) { console.error(error); }
+            document.getElementById('loadingIndicator').style.display = 'none';
         }
 
         // --- RENDER TABLE ---
         function renderTable(logs) {
             const tbody = document.getElementById('tableBody');
             tbody.innerHTML = '';
-
-            if (logs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; color:#94a3b8; padding:2rem;">Belum ada data panggilan.</td></tr>';
-                return;
-            }
+            if (logs.length === 0) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Belum ada data.</td></tr>'; return; }
 
             logs.forEach(log => {
                 let badgeClass = 'status-badge bg-neutral';
@@ -752,59 +691,42 @@
                 else if (log.result === 'Sampai') badgeClass = 'status-badge bg-warning';
                 else badgeClass = 'status-badge bg-danger';
 
+                const isAdmin = currentUserRole === 'admin';
+                const checkboxHtml = isAdmin ? `<td style="text-align:center;"><input type="radio" name="logSelect" onclick="selectLog('${log.id}')"></td>` : `<td style="text-align:center; color:#ccc;">-</td>`;
+                const deleteBtnHtml = isAdmin ? `<button class="btn btn-danger" style="padding:0.3rem 0.6rem;" onclick="deleteLog('${log.id}')">Hapus</button>` : `<span style="color:#ccc; font-size:0.8rem;">No Access</span>`;
+
                 const row = `
                     <tr>
-                        <td style="text-align:center;"><input type="radio" name="logSelect" onclick="selectLog('${log.id}')"></td>
+                        ${checkboxHtml}
                         <td>${log.date}</td>
                         <td>${log.time}</td>
                         <td style="font-weight:600;">${log.name}</td>
                         <td>${log.phone}</td>
-                        <td><code style="font-weight: bold; color: #333;">${log.noPembiayaan || '-'}</code></td>
-                        <td>${log.purpose || '-'}</td>
                         <td><span class="${badgeClass}">${log.result}</span></td>
-                        <td style="font-size:0.85rem; color:#64748b; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${log.notes || '-'}</td>
-                        <td style="text-align:center;">
-                            <button class="btn btn-danger" style="padding:0.3rem 0.6rem; font-size: 0.8rem;" onclick="deleteLog('${log.id}')">Hapus</button>
-                        </td>
+                        <td style="font-size:0.85rem; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${log.notes || '-'}</td>
+                        <td style="text-align:center;">${deleteBtnHtml}</td>
                     </tr>
                 `;
                 tbody.innerHTML += row;
             });
         }
 
-        // --- FILTER TABLE ---
+        // --- FILTER ---
         function filterTable() {
             const term = document.getElementById('searchLog').value.toLowerCase();
             const filtered = allLogs.filter(log => 
-                log.name.toLowerCase().includes(term) || 
-                log.phone.includes(term) || 
-                (log.noPembiayaan && log.noPembiayaan.toLowerCase().includes(term))
+                log.name.toLowerCase().includes(term) || log.phone.includes(term)
             );
             renderTable(filtered);
         }
 
-        // --- DELETE LOG ---
+        // --- DELETE (Admin Only) ---
         async function deleteLog(id) {
-            if(!confirm('Hapus data panggilan ini dari cloud?')) return;
-
-            try {
-                await logsCollection.doc(id).delete();
-                loadFirebaseData();
-            } catch (error) {
-                alert('Error: ' + error.message);
-            }
+            if(!confirm('Hapus data ini?')) return;
+            try { await logsCollection.doc(id).delete(); loadFirebaseData(); } catch (e) { alert(e.message); }
         }
-
-        function selectLog(id) {
-            selectedLogId = id;
-            document.getElementById('btnDelete').disabled = false;
-        }
-
-        function deleteSelected() {
-            if(selectedLogId) {
-                deleteLog(selectedLogId);
-            }
-        }
+        function selectLog(id) { selectedLogId = id; document.getElementById('btnDelete').disabled = false; }
+        function deleteSelected() { if(selectedLogId) deleteLog(selectedLogId); }
 
         // --- DASHBOARD ---
         function updateDashboard(logs) {
@@ -812,14 +734,11 @@
             const success = logs.filter(l => l.result === 'Berhasil').length;
             const followup = logs.filter(l => l.result === 'Sampai').length;
             const fail = total - success - followup;
-
             document.getElementById('totalCalls').textContent = total;
             document.getElementById('successCalls').textContent = success;
             document.getElementById('followupCalls').textContent = followup;
             document.getElementById('failCalls').textContent = fail;
-
-            const rate = total > 0 ? ((success / total) * 100).toFixed(1) : 0;
-            document.getElementById('successRate').textContent = rate + '%';
+            document.getElementById('successRate').textContent = total > 0 ? ((success / total) * 100).toFixed(1) + '%' : '0%';
         }
 
         // --- CHARTS ---
@@ -830,67 +749,36 @@
             const outcomeData = {
                 'Berhasil': logs.filter(l => l.result === 'Berhasil').length,
                 'Sampai': logs.filter(l => l.result === 'Sampai').length,
-                'Tidak Berhasil': logs.filter(l => l.result === 'Tidak Angkat' || l.result === 'Tidak Tertarik').length
+                'Gagal': logs.filter(l => l.result === 'Tidak Angkat' || l.result === 'Tidak Tertarik').length
             };
 
             const hours = Array(24).fill(0);
-            logs.forEach(l => {
-                if(l.time) {
-                    const h = parseInt(l.time.split(':')[0]);
-                    if (!isNaN(h)) hours[h]++;
-                }
-            });
+            logs.forEach(l => { if(l.time) { const h = parseInt(l.time.split(':')[0]); if (!isNaN(h)) hours[h]++; } });
 
             const ctx1 = document.getElementById('outcomeChart').getContext('2d');
             if (outcomeChart) outcomeChart.destroy();
-
             outcomeChart = new Chart(ctx1, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Berhasil', 'Sampai', 'Tidak Berhasil'],
-                    datasets: [{
-                        data: [outcomeData['Berhasil'], outcomeData['Sampai'], outcomeData['Tidak Berhasil']],
-                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-                        borderWidth: 0
-                    }]
+                    labels: ['Berhasil', 'Sampai', 'Gagal'],
+                    datasets: [{ data: [outcomeData['Berhasil'], outcomeData['Sampai'], outcomeData['Gagal']], backgroundColor: ['#10b981', '#f59e0b', '#ef4444'], borderWidth: 0 }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom' } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
             });
 
             const ctx2 = document.getElementById('hourChart').getContext('2d');
             if (hourChart) hourChart.destroy();
-
             hourChart = new Chart(ctx2, {
                 type: 'bar',
                 data: {
                     labels: hours.map((_, i) => `${i}:00`),
-                    datasets: [{
-                        label: 'Jumlah Panggilan',
-                        data: hours,
-                        backgroundColor: '#667eea',
-                        borderRadius: 6
-                    }]
+                    datasets: [{ label: 'Panggilan', data: hours, backgroundColor: '#667eea', borderRadius: 6 }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-                    plugins: { legend: { display: false } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }, plugins: { legend: { display: false } } }
             });
         }
 
-        // --- RESET FORM ---
         function resetForm() {
-            const now = new Date();
-            document.getElementById('callDate').value = now.toISOString().split('T')[0];
-            const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-            document.getElementById('callTime').value = timeString;
-
             document.getElementById('custName').value = '';
             document.getElementById('custPhone').value = '';
             document.getElementById('custPembiayaan').value = '';
@@ -899,24 +787,16 @@
             document.getElementById('callResult').selectedIndex = 0;
         }
 
-        // --- DOWNLOAD CSV ---
         function downloadCSV() {
-            if (allLogs.length === 0) {
-                alert('Belum ada data untuk didownload.');
-                return;
-            }
-
+            if (allLogs.length === 0) return alert('Tidak ada data.');
             let csvContent = "data:text/csv;charset=utf-8,\uFEFF";
-            csvContent += "ID,Tanggal,Jam,Nama Nasabah,No Telepon,No Pembiayaan,Tujuan,Hasil,Catatan\n";
-
+            csvContent += "Tanggal,Jam,Nama,No HP,Hasil,Catatan\n";
             allLogs.forEach(log => {
-                csvContent += `"${log.id}","${log.date}","${log.time}","${log.name}","${log.phone}","${log.noPembiayaan || '-'}","${log.purpose || '-'}","${log.result}","${log.notes || ''}"\n`;
+                csvContent += `"${log.date}","${log.time}","${log.name}","${log.phone}","${log.result}","${log.notes || ''}"\n`;
             });
-
-            const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", "Laporan_Call_Center_Log_Cloud.csv");
+            link.setAttribute("href", encodeURI(csvContent));
+            link.setAttribute("download", "Log_Book_Report.csv");
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -924,4 +804,3 @@
     </script>
 </body>
 </html>
-
